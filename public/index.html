@@ -28,29 +28,35 @@
                     <div class="selectors">
                         <div class="selector-row">
                             <label class="selector-label">Week: </label>
-                            <select class="custom-select">
+                            <select
+                                class="custom-select"
+                                x-model="selectedWeek"
+                            >
                                 <option value="" disabled selected>
                                     Select week
                                 </option>
-                                <option>Week 1</option>
-                                <option>Week 2</option>
-                                <option>Week 3</option>
-                                <option>Week 4</option>
-                                <option>Week 5</option>
+                                <template x-for="week in weeks">
+                                    <option
+                                        :value="week"
+                                        x-text="'Week of ' + week"
+                                    ></option>
+                                </template>
                             </select>
                         </div>
                         <div class="selector-row">
                             <label class="selector-label">Day: </label>
-                            <select class="custom-select">
+                            <select class="custom-select" x-model="selectedDay">
                                 <option value="" disabled selected>
                                     Select Day
                                 </option>
-                                <option>Monday</option>
-                                <option>Tuesday</option>
-                                <option>Wednesday</option>
-                                <option>Thursday</option>
-                                <option>Friday</option>
+                                <template x-for="day in days">
+                                    <option
+                                        :value="day.slice(0, 3).toUpperCase()"
+                                        x-text="day"
+                                    ></option>
+                                </template>
                             </select>
+                            <button @click="testing()">Button to test</button>
                         </div>
                     </div>
                     <!-- Window for adding student -->
@@ -116,10 +122,7 @@
                                     No people added yet
                                 </div>
                             </template>
-                            <div
-                                class="person-item"
-                                style="border-color: rgb(127, 89, 166)"
-                            >
+                            <div class="person-item">
                                 <div class="person-item-info">
                                     <div class="person-item-name">Jason</div>
                                     <div class="person-item-course">
@@ -130,10 +133,7 @@
                                     Remove
                                 </button>
                             </div>
-                            <div
-                                class="person-item"
-                                style="border-color: rgb(127, 89, 166)"
-                            >
+                            <div class="person-item">
                                 <div class="person-item-info">
                                     <div class="person-item-name">Jeremy</div>
                                     <div class="person-item-course">
@@ -144,10 +144,7 @@
                                     Remove
                                 </button>
                             </div>
-                            <div
-                                class="person-item"
-                                style="border-color: rgb(127, 89, 166)"
-                            >
+                            <div class="person-item">
                                 <div class="person-item-info">
                                     <div class="person-item-name">Jeremy</div>
                                     <div class="person-item-course">
@@ -158,10 +155,7 @@
                                     Remove
                                 </button>
                             </div>
-                            <div
-                                class="person-item"
-                                style="border-color: rgb(127, 89, 166)"
-                            >
+                            <div class="person-item">
                                 <div class="person-item-info">
                                     <div class="person-item-name">Jeremy</div>
                                     <div class="person-item-course">
@@ -172,10 +166,7 @@
                                     Remove
                                 </button>
                             </div>
-                            <div
-                                class="person-item"
-                                style="border-color: rgb(127, 89, 166)"
-                            >
+                            <div class="person-item">
                                 <div class="person-item-info">
                                     <div class="person-item-name">Jeremy</div>
                                     <div class="person-item-course">
@@ -186,10 +177,7 @@
                                     Remove
                                 </button>
                             </div>
-                            <div
-                                class="person-item"
-                                style="border-color: rgb(127, 89, 166)"
-                            >
+                            <div class="person-item">
                                 <div class="person-item-info">
                                     <div class="person-item-name">Jeremy</div>
                                     <div class="person-item-course">
@@ -200,10 +188,7 @@
                                     Remove
                                 </button>
                             </div>
-                            <div
-                                class="person-item"
-                                style="border-color: rgb(127, 89, 166)"
-                            >
+                            <div class="person-item">
                                 <div class="person-item-info">
                                     <div class="person-item-name">Jeremy</div>
                                     <div class="person-item-course">
@@ -214,10 +199,7 @@
                                     Remove
                                 </button>
                             </div>
-                            <div
-                                class="person-item"
-                                style="border-color: rgb(127, 89, 166)"
-                            >
+                            <div class="person-item">
                                 <div class="person-item-info">
                                     <div class="person-item-name">Jeremy</div>
                                     <div class="person-item-course">
@@ -229,10 +211,7 @@
                                 </button>
                             </div>
                             <template>
-                                <div
-                                    class="person-item"
-                                    style="border-color: rgb(127, 89, 166)"
-                                >
+                                <div class="person-item">
                                     <div class="person-item-info">
                                         <div class="person-item-name">
                                             Joshua

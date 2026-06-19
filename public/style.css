@@ -456,6 +456,30 @@ body {
     scroll-snap-align: start;
 }
 
+.person-item:nth-child(6n + 1) {
+    border-color: var(--c1);
+}
+
+.person-item:nth-child(6n + 2) {
+    border-color: var(--c2);
+}
+
+.person-item:nth-child(6n + 3) {
+    border-color: var(--c3);
+}
+
+.person-item:nth-child(6n + 4) {
+    border-color: var(--c4);
+}
+
+.person-item:nth-child(6n + 5) {
+    border-color: var(--c5);
+}
+
+.person-item:nth-child(6n + 6) {
+    border-color: var(--c6);
+}
+
 .person-item:last-child {
     margin-bottom: 0;
 }
