@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Free time calculator</title>
+        <link
+            href="https://cdn.jsdelivr.net/npm/fontsource-inter@5.1.1/latin.css"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="style.css" />
+
+        <script
+            defer
+            src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"
+        ></script>
+        <script src="script.js"></script>
+    </head>
+    <body>
+        <div class="app-container" x-data="timetableApp">
+            <header class="header">
+                <h1>Free Time Calculator</h1>
+            </header>
+
+            <main class="main-content">
+                <aside class="sidebar">
+                    <!-- Select week and day stuff -->
+                    <div class="selectors">
+                        <div class="selector-row">
+                            <label class="selector-label">Week: </label>
+                            <select class="custom-select">
+                                <option value="" disabled selected>
+                                    Select week
+                                </option>
+                                <option>Week 1</option>
+                                <option>Week 2</option>
+                                <option>Week 3</option>
+                                <option>Week 4</option>
+                                <option>Week 5</option>
+                            </select>
+                        </div>
+                        <div class="selector-row">
+                            <label class="selector-label">Day: </label>
+                            <select class="custom-select">
+                                <option value="" disabled selected>
+                                    Select Day
+                                </option>
+                                <option>Monday</option>
+                                <option>Tuesday</option>
+                                <option>Wednesday</option>
+                                <option>Thursday</option>
+                                <option>Friday</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Window for adding student -->
+                    <div class="retro-window">
+                        <div class="retro-window-header">
+                            <div class="retro-btn minimize">
+                                <img
+                                    src="images\minimize.png"
+                                    class="retro-icon"
+                                />
+                            </div>
+                            <div class="retro-btn">
+                                <img
+                                    src="images\maximise.png"
+                                    class="retro-icon"
+                                />
+                            </div>
+                            <div class="retro-btn close">
+                                <img
+                                    src="images/close.png"
+                                    class="retro-icon"
+                                />
+                            </div>
+                        </div>
+                        <div class="retro-window-content">
+                            <h3>Person:</h3>
+                            <div class="form-row">
+                                <label class="form-label">Name: </label>
+                                <input
+                                    class="form-input"
+                                    type="text"
+                                    placeholder="e.g John"
+                                />
+                            </div>
+                            <div class="form-row">
+                                <label class="form-label">Intake Code: </label>
+                                <input
+                                    class="form-input"
+                                    type="text"
+                                    placeholder="e.g. UCDF2509ICT(SE)"
+                                />
+                            </div>
+                            <div class="form-row">
+                                <label class="form-label">Group: </label>
+                                <input
+                                    class="form-input"
+                                    type="text"
+                                    placeholder="e.g G1"
+                                />
+                            </div>
+                            <div class="form-actions">
+                                <button class="pill-btn add">Add</button>
+                                <button class="pill-btn remove">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Showing list of people -->
+                    <div class="people-list">
+                        <h3>Enrolled people</h3>
+                        <div class="people-list-items">
+                            <template>
+                                <div class="people-list-empty">
+                                    No people added yet
+                                </div>
+                            </template>
+                            <div
+                                class="person-item"
+                                style="border-color: rgb(127, 89, 166)"
+                            >
+                                <div class="person-item-info">
+                                    <div class="person-item-name">Jason</div>
+                                    <div class="person-item-course">
+                                        UCDF2509ICT
+                                    </div>
+                                </div>
+                                <button class="person-item-remove">
+                                    Remove
+                                </button>
+                            </div>
+                            <div
+                                class="person-item"
+                                style="border-color: rgb(127, 89, 166)"
+                            >
+                                <div class="person-item-info">
+                                    <div class="person-item-name">Jeremy</div>
+                                    <div class="person-item-course">
+                                        UCDF2509ICT
+                                    </div>
+                                </div>
+                                <button class="person-item-remove">
+                                    Remove
+                                </button>
+                            </div>
+                            <div
+                                class="person-item"
+                                style="border-color: rgb(127, 89, 166)"
+                            >
+                                <div class="person-item-info">
+                                    <div class="person-item-name">Jeremy</div>
+                                    <div class="person-item-course">
+                                        UCDF2509ICT
+                                    </div>
+                                </div>
+                                <button class="person-item-remove">
+                                    Remove
+                                </button>
+                            </div>
+                            <div
+                                class="person-item"
+                                style="border-color: rgb(127, 89, 166)"
+                            >
+                                <div class="person-item-info">
+                                    <div class="person-item-name">Jeremy</div>
+                                    <div class="person-item-course">
+                                        UCDF2509ICT
+                                    </div>
+                                </div>
+                                <button class="person-item-remove">
+                                    Remove
+                                </button>
+                            </div>
+                            <div
+                                class="person-item"
+                                style="border-color: rgb(127, 89, 166)"
+                            >
+                                <div class="person-item-info">
+                                    <div class="person-item-name">Jeremy</div>
+                                    <div class="person-item-course">
+                                        UCDF2509ICT
+                                    </div>
+                                </div>
+                                <button class="person-item-remove">
+                                    Remove
+                                </button>
+                            </div>
+                            <div
+                                class="person-item"
+                                style="border-color: rgb(127, 89, 166)"
+                            >
+                                <div class="person-item-info">
+                                    <div class="person-item-name">Jeremy</div>
+                                    <div class="person-item-course">
+                                        UCDF2509ICT
+                                    </div>
+                                </div>
+                                <button class="person-item-remove">
+                                    Remove
+                                </button>
+                            </div>
+                            <div
+                                class="person-item"
+                                style="border-color: rgb(127, 89, 166)"
+                            >
+                                <div class="person-item-info">
+                                    <div class="person-item-name">Jeremy</div>
+                                    <div class="person-item-course">
+                                        UCDF2509ICT
+                                    </div>
+                                </div>
+                                <button class="person-item-remove">
+                                    Remove
+                                </button>
+                            </div>
+                            <div
+                                class="person-item"
+                                style="border-color: rgb(127, 89, 166)"
+                            >
+                                <div class="person-item-info">
+                                    <div class="person-item-name">Jeremy</div>
+                                    <div class="person-item-course">
+                                        UCDF2509ICT
+                                    </div>
+                                </div>
+                                <button class="person-item-remove">
+                                    Remove
+                                </button>
+                            </div>
+                            <template>
+                                <div
+                                    class="person-item"
+                                    style="border-color: rgb(127, 89, 166)"
+                                >
+                                    <div class="person-item-info">
+                                        <div class="person-item-name">
+                                            Joshua
+                                        </div>
+                                        <div class="person-item-course">
+                                            UCDF2509ICT
+                                        </div>
+                                    </div>
+                                    <button class="person-item-remove">
+                                        Remove
+                                    </button>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                    <div class="free-time-section">
+                        <h3>Free Time</h3>
+                        <button class="free-time-btn">
+                            Calculate Free Time
+                        </button>
+                    </div>
+                </aside>
+                <!-- Timetable part -->
+                <section class="timetable-container">
+                    <div class="timetable-person-col">
+                        <!-- empty space -->
+                        <div style="height: 60px"></div>
+                        <div class="person-tag">
+                            <div class="person-tag-name">Jason</div>
+                            <div class="person-tag-course">UCDF2509ICT</div>
+                        </div>
+                        <div class="person-tag">
+                            <div class="person-tag-name">Jeremy</div>
+                            <div class="person-tag-course">UCDF2509ICT</div>
+                        </div>
+                    </div>
+                    <div class="timetable-time">
+                        <div class="timetable-label-row">
+                            <div class="timetable-hour-label">
+                                <span class="">8 AM</span>
+                            </div>
+                            <div class="timetable-hour-label">
+                                <span class="">9 AM</span>
+                            </div>
+                            <div class="timetable-hour-label">
+                                <span class="">10 AM</span>
+                            </div>
+                            <div class="timetable-hour-label">
+                                <span class="">11 AM</span>
+                            </div>
+                            <div class="timetable-hour-label">
+                                <span class="">12 PM</span>
+                            </div>
+                            <div class="timetable-hour-label">
+                                <span class="">1 PM</span>
+                            </div>
+                            <div class="timetable-hour-label">
+                                <span class="">2 PM</span>
+                            </div>
+                            <div class="timetable-hour-label">
+                                <span class="">3 PM</span>
+                            </div>
+                            <div class="timetable-hour-label">
+                                <span class="">4 PM</span>
+                            </div>
+                            <div class="timetable-hour-label">
+                                <span class="">5 PM</span>
+                            </div>
+                            <div class="timetable-hour-label">
+                                <span class="">6 PM</span>
+                            </div>
+                        </div>
+
+                        <div class="timetable-grid">
+                            <div class="timetable-col">
+                                <div class="timetable-grid-line"></div>
+                                <div class="timetable-grid-line"></div>
+                            </div>
+                            <div class="timetable-col">
+                                <div class="timetable-grid-line"></div>
+                                <div class="timetable-grid-line"></div>
+                                <div class="event-card card-pos">
+                                    <div class="event-card-title">
+                                        DBMS301-4-1-SQL
+                                    </div>
+                                    <div class="event-card-subtitle">
+                                        Database Management
+                                    </div>
+                                    <div class="event-card-time">
+                                        8:30AM - 10:30AM
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timetable-col">
+                                <div class="timetable-grid-line"></div>
+                                <div class="timetable-grid-line"></div>
+                            </div>
+                            <div class="timetable-col">
+                                <div class="timetable-grid-line"></div>
+                                <div class="timetable-grid-line"></div>
+                            </div>
+                            <div class="timetable-col">
+                                <div class="timetable-grid-line"></div>
+                                <div class="timetable-grid-line"></div>
+                            </div>
+                            <div class="timetable-col">
+                                <div class="timetable-grid-line"></div>
+                                <div class="timetable-grid-line"></div>
+                            </div>
+                            <div class="timetable-col">
+                                <div class="timetable-grid-line"></div>
+                                <div class="timetable-grid-line"></div>
+                            </div>
+                            <div class="timetable-col">
+                                <div class="timetable-grid-line"></div>
+                                <div class="timetable-grid-line"></div>
+                            </div>
+                            <div class="timetable-col">
+                                <div class="timetable-grid-line"></div>
+                                <div class="timetable-grid-line"></div>
+                            </div>
+                            <div class="timetable-col">
+                                <div class="timetable-grid-line"></div>
+                                <div class="timetable-grid-line"></div>
+                            </div>
+                            <div class="timetable-col">
+                                <div class="timetable-grid-line"></div>
+                                <div class="timetable-grid-line"></div>
+                            </div>
+                            <div class="timetable-col">
+                                <div class="timetable-grid-line"></div>
+                                <div class="timetable-grid-line"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </body>
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.8/dist/htmx.min.js"
+        integrity="sha384-/TgkGk7p307TH7EXJDuUlgG3Ce1UVolAOFopFekQkkXihi5u/6OCvVKyz1W+idaz"
+        crossorigin="anonymous"
+    ></script>
+</html>

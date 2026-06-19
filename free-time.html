@@ -1,0 +1,1503 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+        <title>Free Time</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+            :root {
+                --bg: rgb(243, 239, 246);
+                --bg-secondary: rgb(255, 252, 255);
+                --bg-grid: rgb(238, 232, 248);
+                --bg-input: rgba(255, 255, 255, 0.85);
+                --bg-titlebar: rgb(209, 189, 219);
+                --border: rgb(183, 156, 201);
+                --border-strong: rgb(127, 89, 166);
+                --text: rgb(51, 36, 66);
+                --text-muted: rgb(127, 89, 166);
+                --primary: rgb(108, 72, 132);
+                --btn-add: rgb(164, 91, 120);
+                --btn-remove: rgb(131, 73, 83);
+                --free-bg: rgba(90, 185, 120, 0.15);
+                --free-color: rgb(40, 130, 80);
+                --free-border: rgba(90, 185, 120, 0.5);
+                --grid-line: rgba(135, 91, 164, 0.15);
+                --shadow: 0 4px 20px rgba(76, 54, 99, 0.12);
+                --font: "Nunito", sans-serif;
+            }
+            [data-dark] {
+                --bg: rgb(14, 9, 16);
+                --bg-secondary: rgb(28, 18, 33);
+                --bg-grid: rgb(21, 13, 26);
+                --bg-input: rgb(56, 36, 66);
+                --bg-titlebar: rgb(84, 54, 99);
+                --border: rgb(84, 54, 99);
+                --border-strong: rgb(153, 122, 184);
+                --text: rgb(230, 222, 237);
+                --text-muted: rgb(153, 122, 184);
+                --primary: rgb(153, 122, 184);
+                --btn-add: rgb(183, 123, 147);
+                --btn-remove: rgb(163, 92, 104);
+                --free-bg: rgba(90, 185, 120, 0.12);
+                --free-color: rgb(100, 210, 140);
+                --free-border: rgba(90, 185, 120, 0.35);
+                --grid-line: rgba(153, 122, 184, 0.15);
+                --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            }
+            body {
+                font-family: var(--font);
+                background: var(--bg);
+                color: var(--text);
+                min-height: 100vh;
+                transition:
+                    background 0.3s,
+                    color 0.3s;
+            }
+            ::-webkit-scrollbar {
+                width: 5px;
+                height: 5px;
+            }
+            ::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            ::-webkit-scrollbar-thumb {
+                background: var(--border);
+                border-radius: 10px;
+            }
+
+            /* ── Layout ── */
+            .app {
+                display: flex;
+                height: 100vh;
+                overflow: hidden;
+            }
+            .sidebar {
+                width: 290px;
+                min-width: 290px;
+                padding: 24px 18px;
+                background: var(--bg-secondary);
+                border-right: 2px solid var(--border);
+                overflow-y: auto;
+                display: flex;
+                flex-direction: column;
+                gap: 18px;
+                transition:
+                    background 0.3s,
+                    border-color 0.3s;
+            }
+            .main {
+                flex: 1;
+                padding: 24px;
+                overflow: auto;
+                display: flex;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            /* ── Header ── */
+            .page-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .page-title {
+                font-size: 28px;
+                font-weight: 900;
+                letter-spacing: -0.5px;
+                color: var(--text);
+            }
+            .dark-btn {
+                width: 42px;
+                height: 42px;
+                border-radius: 12px;
+                border: 2px solid var(--border);
+                background: var(--bg);
+                cursor: pointer;
+                font-size: 18px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s;
+                color: var(--text);
+            }
+            .dark-btn:hover {
+                border-color: var(--border-strong);
+                transform: scale(1.05);
+            }
+
+            /* ── Selectors ── */
+            .field-row {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .field-label {
+                font-weight: 700;
+                font-size: 13px;
+                min-width: 46px;
+                color: var(--text);
+            }
+            .styled-select {
+                flex: 1;
+                background: var(--bg-input);
+                border: 1.5px solid var(--border);
+                border-radius: 10px;
+                padding: 8px 12px;
+                font-family: var(--font);
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--text);
+                outline: none;
+                cursor: pointer;
+                transition: border-color 0.2s;
+            }
+            .styled-select:focus {
+                border-color: var(--border-strong);
+            }
+
+            /* ── OS Window ── */
+            .window {
+                border-radius: 16px;
+                overflow: hidden;
+                border: 2px solid var(--border);
+                box-shadow: var(--shadow);
+            }
+            .window-bar {
+                background: var(--bg-titlebar);
+                padding: 9px 14px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                transition: background 0.3s;
+            }
+            .wbtn {
+                width: 13px;
+                height: 13px;
+                border-radius: 50%;
+                border: none;
+                cursor: pointer;
+                font-size: 0;
+            }
+            .window-body {
+                background: var(--bg-secondary);
+                padding: 16px 18px 20px;
+                transition: background 0.3s;
+            }
+            .window-title {
+                font-size: 15px;
+                font-weight: 800;
+                margin-bottom: 14px;
+            }
+            .input-row {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 10px;
+            }
+            .input-label {
+                font-weight: 700;
+                font-size: 12px;
+                min-width: 88px;
+                color: var(--text-muted);
+            }
+            .styled-input {
+                flex: 1;
+                background: var(--bg-input);
+                border: 1.5px solid var(--border);
+                border-radius: 8px;
+                padding: 7px 10px;
+                font-family: var(--font);
+                font-size: 12px;
+                font-weight: 600;
+                color: var(--text);
+                outline: none;
+                transition: border-color 0.2s;
+            }
+            .styled-input:focus {
+                border-color: var(--border-strong);
+            }
+            .styled-input::placeholder {
+                color: var(--text-muted);
+                opacity: 0.6;
+                font-weight: 500;
+            }
+            .btn-row {
+                display: flex;
+                gap: 10px;
+                margin-top: 4px;
+            }
+            .pill-btn {
+                flex: 1;
+                border: none;
+                border-radius: 50px;
+                padding: 10px 0;
+                font-family: var(--font);
+                font-size: 13px;
+                font-weight: 800;
+                cursor: pointer;
+                transition: all 0.2s;
+                color: #fff;
+                letter-spacing: 0.2px;
+            }
+            .pill-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 14px rgba(0, 0, 0, 0.25);
+            }
+            .pill-btn:active {
+                transform: translateY(0);
+            }
+            .btn-add {
+                background: var(--btn-add);
+            }
+            .btn-remove {
+                background: var(--btn-remove);
+            }
+
+            /* ── Person list ── */
+            .person-list {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            .person-list-label {
+                font-size: 11px;
+                font-weight: 800;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                color: var(--text-muted);
+                margin-bottom: 2px;
+            }
+            .person-card {
+                border-radius: 11px;
+                padding: 8px 12px;
+                border: 1.5px solid;
+                cursor: pointer;
+                transition: opacity 0.2s;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+            .person-card:hover {
+                opacity: 0.8;
+            }
+            .person-card-name {
+                font-size: 13px;
+                font-weight: 700;
+            }
+            .person-card-sub {
+                font-size: 11px;
+                opacity: 0.75;
+                margin-top: 1px;
+            }
+            .person-del {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                border: none;
+                background: rgba(0, 0, 0, 0.12);
+                cursor: pointer;
+                font-size: 12px;
+                font-weight: 700;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: inherit;
+                transition: background 0.15s;
+                flex-shrink: 0;
+            }
+            .person-del:hover {
+                background: rgba(0, 0, 0, 0.25);
+            }
+
+            /* ── Section divider ── */
+            .divider {
+                height: 1.5px;
+                background: var(--border);
+                border-radius: 1px;
+            }
+
+            /* ── Timetable header bar ── */
+            .timetable-topbar {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+            .tt-day {
+                font-size: 20px;
+                font-weight: 800;
+            }
+            .tt-week-label {
+                font-size: 13px;
+                color: var(--text-muted);
+                font-weight: 600;
+            }
+            .free-badge {
+                margin-left: auto;
+                background: var(--free-bg);
+                color: var(--free-color);
+                border: 1.5px solid var(--free-border);
+                border-radius: 50px;
+                padding: 4px 14px;
+                font-size: 12px;
+                font-weight: 800;
+            }
+
+            /* ── Grid wrapper ── */
+            .grid-outer {
+                background: var(--bg-grid);
+                border-radius: 20px;
+                border: 2px solid var(--border);
+                overflow: hidden;
+                min-width: 600px;
+            }
+
+            /* ── Grid header (time labels) ── */
+            .grid-header {
+                display: flex;
+                border-bottom: 1.5px solid var(--border);
+                position: sticky;
+                top: 0;
+                z-index: 10;
+                background: var(--bg-grid);
+            }
+            .grid-name-col {
+                min-width: 150px;
+                width: 150px;
+                padding: 10px 14px;
+                border-right: 1.5px solid var(--border);
+                font-size: 11px;
+                font-weight: 700;
+                color: var(--text-muted);
+                text-transform: uppercase;
+                letter-spacing: 0.8px;
+            }
+            .grid-time-cell {
+                min-width: 90px;
+                width: 90px;
+                padding: 10px 0;
+                text-align: center;
+                font-size: 11px;
+                font-weight: 700;
+                color: var(--text-muted);
+                border-right: 1px solid var(--grid-line);
+                position: relative;
+            }
+            .free-time-tick {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 3px;
+                background: var(--free-color);
+                opacity: 0.5;
+                border-radius: 1px;
+            }
+
+            /* ── Grid row ── */
+            .grid-row {
+                display: flex;
+                border-bottom: 1px solid var(--grid-line);
+                min-height: 76px;
+                position: relative;
+            }
+            .grid-row:last-child {
+                border-bottom: none;
+            }
+            .grid-name-cell {
+                min-width: 150px;
+                width: 150px;
+                padding: 10px 10px;
+                border-right: 1.5px solid var(--border);
+                display: flex;
+                align-items: center;
+            }
+            .person-tag {
+                border-radius: 11px;
+                padding: 7px 11px;
+                border: 1.5px solid;
+                width: 100%;
+            }
+            .person-tag-name {
+                font-size: 13px;
+                font-weight: 700;
+            }
+            .person-tag-sub {
+                font-size: 10px;
+                opacity: 0.75;
+                margin-top: 1px;
+                line-height: 1.4;
+            }
+
+            .grid-timeline {
+                flex: 1;
+                position: relative;
+                display: flex;
+            }
+            .time-slot-bg {
+                min-width: 90px;
+                width: 90px;
+                height: 100%;
+                border-right: 1px solid var(--grid-line);
+                position: relative;
+                transition: background 0.2s;
+            }
+            .time-slot-bg.is-free {
+                background: var(--free-bg);
+            }
+
+            /* ── Class block ── */
+            .class-block {
+                position: absolute;
+                top: 6px;
+                bottom: 6px;
+                border-radius: 9px;
+                padding: 5px 8px;
+                font-size: 10px;
+                font-weight: 700;
+                overflow: hidden;
+                cursor: default;
+                border-left: 3px solid;
+                line-height: 1.35;
+                transition:
+                    transform 0.15s,
+                    box-shadow 0.15s;
+                z-index: 2;
+            }
+            .class-block:hover {
+                transform: scaleY(1.02);
+                box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
+            }
+            .class-subject {
+                font-size: 10px;
+                font-weight: 800;
+            }
+            .class-name {
+                font-size: 10px;
+                font-weight: 600;
+                opacity: 0.85;
+            }
+            .class-time {
+                font-size: 10px;
+                opacity: 0.7;
+            }
+            .class-room {
+                font-size: 9px;
+                opacity: 0.6;
+            }
+
+            /* ── Free time summary row ── */
+            .free-row {
+                display: flex;
+                background: transparent;
+                border-top: 1.5px solid var(--border);
+            }
+            .free-row-label {
+                min-width: 150px;
+                width: 150px;
+                padding: 8px 14px;
+                border-right: 1.5px solid var(--border);
+                display: flex;
+                align-items: center;
+                font-size: 11px;
+                font-weight: 800;
+                text-transform: uppercase;
+                letter-spacing: 0.8px;
+                color: var(--free-color);
+            }
+            .free-row-slot {
+                min-width: 90px;
+                width: 90px;
+                border-right: 1px solid var(--grid-line);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 36px;
+                transition: background 0.2s;
+            }
+            .free-row-slot.is-free {
+                background: var(--free-bg);
+            }
+            .free-check {
+                width: 18px;
+                height: 18px;
+                border-radius: 50%;
+                background: var(--free-color);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 10px;
+                color: #fff;
+                font-weight: 800;
+            }
+
+            /* ── Empty state ── */
+            .empty-state {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                padding: 60px 20px;
+                color: var(--text-muted);
+                background: var(--bg-grid);
+                border-radius: 20px;
+                border: 2px dashed var(--border);
+            }
+            .empty-icon {
+                font-size: 36px;
+            }
+            .empty-text {
+                font-size: 15px;
+                font-weight: 700;
+            }
+            .empty-sub {
+                font-size: 13px;
+                opacity: 0.7;
+            }
+
+            /* ── Mobile ── */
+            @media (max-width: 700px) {
+                .app {
+                    flex-direction: column;
+                    height: auto;
+                    overflow: auto;
+                }
+                .sidebar {
+                    width: 100%;
+                    min-width: unset;
+                    border-right: none;
+                    border-bottom: 2px solid var(--border);
+                    overflow-y: visible;
+                }
+                .main {
+                    padding: 16px;
+                }
+                .grid-outer {
+                    min-width: 500px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="app" id="app">
+            <!-- ── SIDEBAR ── -->
+            <aside class="sidebar">
+                <div class="page-header">
+                    <span class="page-title">Free time</span>
+                    <button
+                        class="dark-btn"
+                        id="darkBtn"
+                        title="Toggle dark mode"
+                    >
+                        🌙
+                    </button>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 12px">
+                    <div class="field-row">
+                        <span class="field-label">Week:</span>
+                        <select class="styled-select" id="weekSelect"></select>
+                    </div>
+                    <div class="field-row">
+                        <span class="field-label">Day:</span>
+                        <select class="styled-select" id="daySelect">
+                            <option>Monday</option>
+                            <option>Tuesday</option>
+                            <option>Wednesday</option>
+                            <option>Thursday</option>
+                            <option>Friday</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="divider"></div>
+
+                <!-- OS-style add window -->
+                <div class="window">
+                    <div class="window-bar">
+                        <button
+                            class="wbtn"
+                            style="background: #ff6b6b"
+                        ></button>
+                        <button
+                            class="wbtn"
+                            style="background: #ffd93d"
+                        ></button>
+                        <button
+                            class="wbtn"
+                            style="background: #6bcb77"
+                        ></button>
+                    </div>
+                    <div class="window-body">
+                        <div class="window-title">Add new person:</div>
+                        <div class="input-row">
+                            <span class="input-label">Name:</span>
+                            <input
+                                class="styled-input"
+                                id="inName"
+                                placeholder="e.g. John"
+                                autocomplete="off"
+                            />
+                        </div>
+                        <div class="input-row">
+                            <span class="input-label">Intake code:</span>
+                            <input
+                                class="styled-input"
+                                id="inIntake"
+                                placeholder="e.g. UCDF2509ICT(SE)"
+                                autocomplete="off"
+                            />
+                        </div>
+                        <div class="input-row">
+                            <span class="input-label">Group:</span>
+                            <input
+                                class="styled-input"
+                                id="inGroup"
+                                placeholder="e.g. G1"
+                                autocomplete="off"
+                            />
+                        </div>
+                        <div class="btn-row">
+                            <button class="pill-btn btn-add" id="btnAdd">
+                                Add
+                            </button>
+                            <button class="pill-btn btn-remove" id="btnRemove">
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Person list -->
+                <div id="personListWrap" style="display: none">
+                    <div class="person-list-label">Added persons</div>
+                    <div class="person-list" id="personList"></div>
+                </div>
+            </aside>
+
+            <!-- ── MAIN ── -->
+            <main class="main">
+                <div class="timetable-topbar">
+                    <span class="tt-day" id="ttDay">Monday</span>
+                    <span class="tt-week-label" id="ttWeek"></span>
+                    <span
+                        class="free-badge"
+                        id="freeBadge"
+                        style="display: none"
+                    ></span>
+                </div>
+                <div style="overflow-x: auto" id="gridWrap">
+                    <div class="empty-state" id="emptyState">
+                        <div class="empty-icon">🗓️</div>
+                        <div class="empty-text">No one added yet</div>
+                        <div class="empty-sub">
+                            Add a person using the panel on the left
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <script>
+            /* ── Timetable DB (keyed by intakeCode → group → day → classes) ── */
+            const DB = {
+                "UCDF2509ICT(SE)": {
+                    G1: {
+                        Monday: [
+                            {
+                                id: 1,
+                                sub: "UCTS2103",
+                                name: "Data Structures",
+                                start: 8,
+                                dur: 2,
+                                room: "KB-203",
+                            },
+                            {
+                                id: 2,
+                                sub: "UCCD2303",
+                                name: "Database Systems",
+                                start: 14,
+                                dur: 1,
+                                room: "KB-204",
+                            },
+                        ],
+                        Tuesday: [
+                            {
+                                id: 3,
+                                sub: "UCCD2203",
+                                name: "Web Technologies",
+                                start: 10,
+                                dur: 2,
+                                room: "ISCC-T-2",
+                            },
+                            {
+                                id: 4,
+                                sub: "AICTO022",
+                                name: "AI Concepts",
+                                start: 15,
+                                dur: 1,
+                                room: "ISCC-T-3",
+                            },
+                        ],
+                        Wednesday: [
+                            {
+                                id: 5,
+                                sub: "UCCD2303",
+                                name: "Database Lab",
+                                start: 9,
+                                dur: 2,
+                                room: "Lab-3",
+                            },
+                            {
+                                id: 6,
+                                sub: "UCTS3103",
+                                name: "Software Eng",
+                                start: 14,
+                                dur: 2,
+                                room: "KB-101",
+                            },
+                        ],
+                        Thursday: [
+                            {
+                                id: 7,
+                                sub: "AICTO022",
+                                name: "AI Concepts",
+                                start: 10,
+                                dur: 1,
+                                room: "ISCC-T-3",
+                            },
+                            {
+                                id: 8,
+                                sub: "UCCD2203",
+                                name: "Web Lab",
+                                start: 14,
+                                dur: 2,
+                                room: "Lab-2",
+                            },
+                        ],
+                        Friday: [
+                            {
+                                id: 9,
+                                sub: "UCTS2103",
+                                name: "DS Lab",
+                                start: 11,
+                                dur: 2,
+                                room: "Lab-1",
+                            },
+                            {
+                                id: 10,
+                                sub: "UCTS3103",
+                                name: "Soft Eng Tut",
+                                start: 15,
+                                dur: 1,
+                                room: "KB-102",
+                            },
+                        ],
+                    },
+                    G2: {
+                        Monday: [
+                            {
+                                id: 11,
+                                sub: "UCCD2203",
+                                name: "Web Technologies",
+                                start: 10,
+                                dur: 2,
+                                room: "ISCC-T-1",
+                            },
+                            {
+                                id: 12,
+                                sub: "AICTO022",
+                                name: "AI Concepts",
+                                start: 14,
+                                dur: 1,
+                                room: "ISCC-T-3",
+                            },
+                        ],
+                        Tuesday: [
+                            {
+                                id: 13,
+                                sub: "UCTS2103",
+                                name: "Data Structures",
+                                start: 8,
+                                dur: 2,
+                                room: "KB-203",
+                            },
+                            {
+                                id: 14,
+                                sub: "UCCD2303",
+                                name: "Database Systems",
+                                start: 13,
+                                dur: 1,
+                                room: "KB-204",
+                            },
+                        ],
+                        Wednesday: [
+                            {
+                                id: 15,
+                                sub: "UCCD2203",
+                                name: "Web Lab",
+                                start: 10,
+                                dur: 2,
+                                room: "Lab-2",
+                            },
+                            {
+                                id: 16,
+                                sub: "UCTS2103",
+                                name: "DS Lab",
+                                start: 14,
+                                dur: 2,
+                                room: "Lab-1",
+                            },
+                        ],
+                        Thursday: [
+                            {
+                                id: 17,
+                                sub: "UCCD2303",
+                                name: "Database Lab",
+                                start: 9,
+                                dur: 2,
+                                room: "Lab-3",
+                            },
+                            {
+                                id: 18,
+                                sub: "UCTS3103",
+                                name: "Software Eng",
+                                start: 14,
+                                dur: 2,
+                                room: "KB-101",
+                            },
+                        ],
+                        Friday: [
+                            {
+                                id: 19,
+                                sub: "AICTO022",
+                                name: "AI Lab",
+                                start: 11,
+                                dur: 2,
+                                room: "ISCC-T-3",
+                            },
+                            {
+                                id: 20,
+                                sub: "UCTS3103",
+                                name: "Soft Eng Tut",
+                                start: 15,
+                                dur: 1,
+                                room: "KB-102",
+                            },
+                        ],
+                    },
+                    G3: {
+                        Monday: [
+                            {
+                                id: 21,
+                                sub: "UCCD2303",
+                                name: "Database Systems",
+                                start: 8,
+                                dur: 1,
+                                room: "KB-204",
+                            },
+                            {
+                                id: 22,
+                                sub: "UCTS2103",
+                                name: "Data Structures",
+                                start: 11,
+                                dur: 2,
+                                room: "KB-203",
+                            },
+                        ],
+                        Tuesday: [
+                            {
+                                id: 23,
+                                sub: "UCTS3103",
+                                name: "Software Eng",
+                                start: 9,
+                                dur: 2,
+                                room: "KB-101",
+                            },
+                            {
+                                id: 24,
+                                sub: "AICTO022",
+                                name: "AI Concepts",
+                                start: 13,
+                                dur: 1,
+                                room: "ISCC-T-3",
+                            },
+                        ],
+                        Wednesday: [
+                            {
+                                id: 25,
+                                sub: "UCCD2203",
+                                name: "Web Technologies",
+                                start: 8,
+                                dur: 2,
+                                room: "ISCC-T-2",
+                            },
+                            {
+                                id: 26,
+                                sub: "UCCD2303",
+                                name: "Database Lab",
+                                start: 13,
+                                dur: 2,
+                                room: "Lab-3",
+                            },
+                        ],
+                        Thursday: [
+                            {
+                                id: 27,
+                                sub: "AICTO022",
+                                name: "AI Lab",
+                                start: 10,
+                                dur: 2,
+                                room: "ISCC-T-3",
+                            },
+                            {
+                                id: 28,
+                                sub: "UCCD2203",
+                                name: "Web Lab",
+                                start: 14,
+                                dur: 2,
+                                room: "Lab-2",
+                            },
+                        ],
+                        Friday: [
+                            {
+                                id: 29,
+                                sub: "UCTS2103",
+                                name: "DS Lab",
+                                start: 9,
+                                dur: 2,
+                                room: "Lab-1",
+                            },
+                            {
+                                id: 30,
+                                sub: "UCTS3103",
+                                name: "Soft Eng Tut",
+                                start: 13,
+                                dur: 1,
+                                room: "KB-102",
+                            },
+                        ],
+                    },
+                },
+                UCDF2509CS: {
+                    G1: {
+                        Monday: [
+                            {
+                                id: 31,
+                                sub: "UCCD3103",
+                                name: "OS Concepts",
+                                start: 9,
+                                dur: 2,
+                                room: "KB-301",
+                            },
+                            {
+                                id: 32,
+                                sub: "UCCD3203",
+                                name: "Computer Networks",
+                                start: 14,
+                                dur: 1,
+                                room: "KB-302",
+                            },
+                        ],
+                        Tuesday: [
+                            {
+                                id: 33,
+                                sub: "UCTS3203",
+                                name: "Algorithm Design",
+                                start: 8,
+                                dur: 2,
+                                room: "KB-203",
+                            },
+                            {
+                                id: 34,
+                                sub: "UCCD3103",
+                                name: "OS Lab",
+                                start: 14,
+                                dur: 2,
+                                room: "Lab-5",
+                            },
+                        ],
+                        Wednesday: [
+                            {
+                                id: 35,
+                                sub: "UCCD3203",
+                                name: "Network Lab",
+                                start: 10,
+                                dur: 2,
+                                room: "Lab-4",
+                            },
+                        ],
+                        Thursday: [
+                            {
+                                id: 36,
+                                sub: "UCTS3203",
+                                name: "Algorithm Tut",
+                                start: 11,
+                                dur: 1,
+                                room: "KB-201",
+                            },
+                            {
+                                id: 37,
+                                sub: "UCCD4103",
+                                name: "Machine Learning",
+                                start: 14,
+                                dur: 2,
+                                room: "KB-401",
+                            },
+                        ],
+                        Friday: [
+                            {
+                                id: 38,
+                                sub: "UCCD4103",
+                                name: "ML Lab",
+                                start: 10,
+                                dur: 2,
+                                room: "Lab-6",
+                            },
+                        ],
+                    },
+                },
+            };
+
+            const HOURS = Array.from({ length: 12 }, (_, i) => i + 8);
+            const HOUR_W = 90;
+            const DAYS = [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+            ];
+
+            const PERSON_PALETTES = [
+                {
+                    bg: "rgba(135,91,164,0.13)",
+                    border: "rgb(135,91,164)",
+                    text: "rgb(81,54,99)",
+                    blockBg: "rgba(135,91,164,0.18)",
+                    blockBorder: "rgb(108,72,132)",
+                    blockText: "rgb(76,54,99)",
+                },
+                {
+                    bg: "rgba(164,91,120,0.13)",
+                    border: "rgb(164,91,120)",
+                    text: "rgb(99,54,72)",
+                    blockBg: "rgba(164,91,120,0.18)",
+                    blockBorder: "rgb(131,73,83)",
+                    blockText: "rgb(76,40,60)",
+                },
+                {
+                    bg: "rgba(91,135,164,0.13)",
+                    border: "rgb(91,135,164)",
+                    text: "rgb(54,81,99)",
+                    blockBg: "rgba(91,135,164,0.18)",
+                    blockBorder: "rgb(60,100,132)",
+                    blockText: "rgb(40,60,80)",
+                },
+                {
+                    bg: "rgba(91,164,120,0.13)",
+                    border: "rgb(91,164,120)",
+                    text: "rgb(40,90,60)",
+                    blockBg: "rgba(91,164,120,0.18)",
+                    blockBorder: "rgb(60,132,90)",
+                    blockText: "rgb(30,70,50)",
+                },
+                {
+                    bg: "rgba(164,140,91,0.13)",
+                    border: "rgb(164,140,91)",
+                    text: "rgb(90,75,40)",
+                    blockBg: "rgba(164,140,91,0.18)",
+                    blockBorder: "rgb(130,110,60)",
+                    blockText: "rgb(80,65,30)",
+                },
+            ];
+
+            // ── State ──
+            let persons = [
+                {
+                    id: 1,
+                    name: "John",
+                    intakeCode: "UCDF2509ICT(SE)",
+                    group: "G1",
+                },
+                {
+                    id: 2,
+                    name: "Jason",
+                    intakeCode: "UCDF2509ICT(SE)",
+                    group: "G2",
+                },
+            ];
+            let nextId = 3;
+            let dark = false;
+            let selectedDay = "Monday";
+            let selectedWeek = 0;
+
+            // ── Week options ──
+            function buildWeeks() {
+                const sel = document.getElementById("weekSelect");
+                const now = new Date();
+                const mon = new Date(now);
+                mon.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+                const fmt = (d) =>
+                    d.toLocaleDateString("en-MY", {
+                        day: "numeric",
+                        month: "short",
+                    });
+                for (let i = -2; i <= 8; i++) {
+                    const ws = new Date(mon);
+                    ws.setDate(mon.getDate() + i * 7);
+                    const we = new Date(ws);
+                    we.setDate(ws.getDate() + 4);
+                    const yr = we.getFullYear();
+                    const opt = document.createElement("option");
+                    opt.value = i;
+                    opt.textContent = `${fmt(ws)} – ${fmt(we)} ${yr}`;
+                    if (i === 0) opt.selected = true;
+                    sel.appendChild(opt);
+                }
+                document.getElementById("ttWeek").textContent =
+                    sel.options[sel.selectedIndex].text;
+            }
+
+            function fmtHour(h) {
+                if (h === 12) return "12PM";
+                if (h > 12) return `${h - 12}PM`;
+                return `${h}AM`;
+            }
+
+            function getSchedule(person, day) {
+                return DB[person.intakeCode]?.[person.group]?.[day] || [];
+            }
+
+            function getFreeSlots() {
+                if (!persons.length) return [];
+                const busy = new Set();
+                persons.forEach((p) => {
+                    getSchedule(p, selectedDay).forEach((c) => {
+                        for (let h = c.start; h < c.start + c.dur; h++)
+                            busy.add(h);
+                    });
+                });
+                return HOURS.filter((h) => !busy.has(h));
+            }
+
+            // ── Render person sidebar list ──
+            function renderPersonList() {
+                const wrap = document.getElementById("personListWrap");
+                const list = document.getElementById("personList");
+                if (!persons.length) {
+                    wrap.style.display = "none";
+                    return;
+                }
+                wrap.style.display = "block";
+                list.innerHTML = "";
+                persons.forEach((p, i) => {
+                    const pal = PERSON_PALETTES[i % PERSON_PALETTES.length];
+                    const card = document.createElement("div");
+                    card.className = "person-card";
+                    card.style.cssText = `background:${pal.bg};border-color:${pal.border};color:${pal.text}`;
+                    card.innerHTML = `
+      <div>
+        <div class="person-card-name">${p.name}</div>
+        <div class="person-card-sub">${p.intakeCode} (${p.group})</div>
+      </div>
+      <button class="person-del" data-id="${p.id}" title="Remove">✕</button>
+    `;
+                    list.appendChild(card);
+                });
+            }
+
+            // ── Render timetable grid ──
+            function renderGrid() {
+                const free = getFreeSlots();
+                const badge = document.getElementById("freeBadge");
+                const ttDay = document.getElementById("ttDay");
+                ttDay.textContent = selectedDay;
+
+                if (persons.length === 0) {
+                    document.getElementById("gridWrap").innerHTML = `
+      <div class="empty-state">
+        <div class="empty-icon">🗓️</div>
+        <div class="empty-text">No one added yet</div>
+        <div class="empty-sub">Add a person using the panel on the left</div>
+      </div>`;
+                    badge.style.display = "none";
+                    return;
+                }
+
+                // Free badge
+                if (free.length && persons.length > 1) {
+                    badge.style.display = "inline-block";
+                    badge.textContent = `${free.length} free hour${free.length !== 1 ? "s" : ""}`;
+                } else {
+                    badge.style.display = "none";
+                }
+
+                const totalW = 150 + HOURS.length * HOUR_W;
+
+                let html = `<div class="grid-outer" style="width:${totalW}px">`;
+
+                // Header
+                html += `<div class="grid-header">
+    <div class="grid-name-col">Person</div>`;
+                HOURS.forEach((h) => {
+                    const isFree = free.includes(h) && persons.length > 1;
+                    html += `<div class="grid-time-cell">
+      ${fmtHour(h)}
+      ${isFree ? '<div class="free-time-tick"></div>' : ""}
+    </div>`;
+                });
+                html += `</div>`;
+
+                // Person rows
+                persons.forEach((p, pi) => {
+                    const pal = PERSON_PALETTES[pi % PERSON_PALETTES.length];
+                    const schedule = getSchedule(p, selectedDay);
+                    html += `<div class="grid-row">
+      <div class="grid-name-cell">
+        <div class="person-tag" style="background:${pal.bg};border-color:${pal.border};color:${pal.text}">
+          <div class="person-tag-name">${p.name}</div>
+          <div class="person-tag-sub">${p.intakeCode}<br/>(${p.group})</div>
+        </div>
+      </div>
+      <div class="grid-timeline">`;
+                    HOURS.forEach((h) => {
+                        const isFree = free.includes(h) && persons.length > 1;
+                        html += `<div class="time-slot-bg${isFree ? " is-free" : ""}"></div>`;
+                    });
+                    // Class blocks
+                    schedule.forEach((cls, ci) => {
+                        const left = (cls.start - 8) * HOUR_W + 4;
+                        const width = cls.dur * HOUR_W - 8;
+                        const bc = [
+                            {
+                                bg: "rgba(183,156,201,0.3)",
+                                border: "rgb(108,72,132)",
+                                text: "rgb(76,54,99)",
+                            },
+                            {
+                                bg: "rgba(201,156,174,0.3)",
+                                border: "rgb(131,73,83)",
+                                text: "rgb(80,40,56)",
+                            },
+                            {
+                                bg: "rgba(164,190,201,0.3)",
+                                border: "rgb(60,100,132)",
+                                text: "rgb(40,60,80)",
+                            },
+                        ][ci % 3];
+                        html += `<div class="class-block" style="left:${left}px;width:${width}px;background:${bc.bg};border-left-color:${bc.border};color:${bc.text}">
+        <div class="class-subject">${cls.sub}</div>
+        <div class="class-name">${cls.name}</div>
+        <div class="class-time">${fmtHour(cls.start)}–${fmtHour(cls.start + cls.dur)}</div>
+        <div class="class-room">${cls.room}</div>
+      </div>`;
+                    });
+                    html += `</div></div>`;
+                });
+
+                // Free time summary row (only if ≥2 persons)
+                if (persons.length > 1) {
+                    html += `<div class="free-row">
+      <div class="free-row-label">Free&nbsp;Time</div>`;
+                    HOURS.forEach((h) => {
+                        const isFree = free.includes(h);
+                        html += `<div class="free-row-slot${isFree ? " is-free" : ""}">
+        ${isFree ? '<div class="free-check">✓</div>' : ""}
+      </div>`;
+                    });
+                    html += `</div>`;
+                }
+
+                html += `</div>`;
+                document.getElementById("gridWrap").innerHTML = html;
+            }
+
+            // ── Full render ──
+            function render() {
+                renderPersonList();
+                renderGrid();
+            }
+
+            // ── Dark mode ──
+            function applyDark() {
+                const app = document.getElementById("app");
+                const btn = document.getElementById("darkBtn");
+                if (dark) {
+                    app.setAttribute("data-dark", "");
+                    btn.textContent = "☀️";
+                } else {
+                    app.removeAttribute("data-dark");
+                    btn.textContent = "🌙";
+                }
+            }
+
+            // ── Add person ──
+            document.getElementById("btnAdd").addEventListener("click", () => {
+                const name = document.getElementById("inName").value.trim();
+                const intake = document.getElementById("inIntake").value.trim();
+                const group = document.getElementById("inGroup").value.trim();
+                if (!name || !intake || !group) return;
+                persons.push({ id: nextId++, name, intakeCode: intake, group });
+                document.getElementById("inName").value = "";
+                document.getElementById("inIntake").value = "";
+                document.getElementById("inGroup").value = "";
+                render();
+            });
+
+            // Enter key
+            ["inName", "inIntake", "inGroup"].forEach((id) => {
+                document.getElementById(id).addEventListener("keydown", (e) => {
+                    if (e.key === "Enter")
+                        document.getElementById("btnAdd").click();
+                });
+            });
+
+            // ── Remove last person ──
+            document
+                .getElementById("btnRemove")
+                .addEventListener("click", () => {
+                    if (!persons.length) return;
+                    persons.pop();
+                    render();
+                });
+
+            // ── Remove individual person ──
+            document
+                .getElementById("personList")
+                .addEventListener("click", (e) => {
+                    const btn = e.target.closest("[data-id]");
+                    if (!btn) return;
+                    const id = +btn.dataset.id;
+                    persons = persons.filter((p) => p.id !== id);
+                    render();
+                });
+
+            // ── Day/Week change ──
+            document
+                .getElementById("daySelect")
+                .addEventListener("change", (e) => {
+                    selectedDay = e.target.value;
+                    render();
+                });
+            document
+                .getElementById("weekSelect")
+                .addEventListener("change", (e) => {
+                    selectedWeek = +e.target.value;
+                    document.getElementById("ttWeek").textContent =
+                        e.target.options[e.target.selectedIndex].text;
+                    render();
+                });
+
+            // ── Dark mode toggle ──
+            document.getElementById("darkBtn").addEventListener("click", () => {
+                dark = !dark;
+                applyDark();
+                render();
+            });
+
+            // ── Dark mode: update block colours for dark ──
+            // Intercept grid render to swap block colours in dark mode
+            const _origRender = render;
+            function renderWithDark() {
+                _origRender();
+                if (dark) {
+                    document.querySelectorAll(".class-block").forEach((el) => {
+                        // lighten the existing inline colours for dark bg
+                        el.style.color = "rgb(207,189,219)";
+                    });
+                    document.querySelectorAll(".person-tag").forEach((el) => {
+                        el.style.color = "rgb(207,189,219)";
+                    });
+                }
+            }
+            // Replace render calls with dark-aware version
+            document
+                .getElementById("btnAdd")
+                .addEventListener("click", () => {}, true);
+
+            // ── Init ──
+            buildWeeks();
+            render();
+
+            // fix dark mode block text on re-render
+            const origGridRender = renderGrid;
+            function renderAll() {
+                renderPersonList();
+                renderGrid();
+                if (dark) {
+                    document.querySelectorAll(".class-block").forEach((el) => {
+                        el.style.color = "rgb(207,189,219)";
+                    });
+                    document.querySelectorAll(".person-tag").forEach((el) => {
+                        el.style.color = "rgb(207,189,219)";
+                    });
+                    document
+                        .querySelectorAll(
+                            ".grid-name-cell .person-card-sub,.grid-name-cell .person-card-name",
+                        )
+                        .forEach((el) => {
+                            el.style.color = "rgb(207,189,219)";
+                        });
+                }
+            }
+
+            // Re-wire all render calls to renderAll
+            document.getElementById("btnAdd").onclick = () => {
+                const name = document.getElementById("inName").value.trim();
+                const intake = document.getElementById("inIntake").value.trim();
+                const group = document.getElementById("inGroup").value.trim();
+                if (!name || !intake || !group) return;
+                persons.push({ id: nextId++, name, intakeCode: intake, group });
+                document.getElementById("inName").value = "";
+                document.getElementById("inIntake").value = "";
+                document.getElementById("inGroup").value = "";
+                renderAll();
+            };
+            document.getElementById("btnRemove").onclick = () => {
+                if (!persons.length) return;
+                persons.pop();
+                renderAll();
+            };
+            document.getElementById("daySelect").onchange = (e) => {
+                selectedDay = e.target.value;
+                renderAll();
+            };
+            document.getElementById("weekSelect").onchange = (e) => {
+                selectedWeek = +e.target.value;
+                document.getElementById("ttWeek").textContent =
+                    e.target.options[e.target.selectedIndex].text;
+                renderAll();
+            };
+            document.getElementById("darkBtn").onclick = () => {
+                dark = !dark;
+                applyDark();
+                renderAll();
+            };
+            document.getElementById("personList").onclick = (e) => {
+                const btn = e.target.closest("[data-id]");
+                if (!btn) return;
+                persons = persons.filter((p) => p.id !== btn.dataset.id * 1);
+                renderAll();
+            };
+            ["inName", "inIntake", "inGroup"].forEach((id) => {
+                document.getElementById(id).onkeydown = (e) => {
+                    if (e.key === "Enter")
+                        document.getElementById("btnAdd").click();
+                };
+            });
+
+            renderAll();
+        </script>
+    </body>
+</html>
