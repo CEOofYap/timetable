@@ -54,19 +54,32 @@ function getMonday(classSlots) {
     classSlots.forEach((slot) => {
         monday = getWeek(slot);
 
-        const options = { day: "2-digit", month: "short", year: "numeric" };
-        const mondayString = monday
-            .toLocaleDateString("en-GB", options)
-            .replace(",", "");
-
         const lastSavedMonday = uniqueMondays[uniqueMondays.length - 1];
 
-        if (lastSavedMonday !== mondayString) {
-            uniqueMondays.push(mondayString);
+        const isSameDay =
+            lastSavedMonday &&
+            lastSavedMonday.toDateString() === monday.toDateString();
+
+        if (!isSameDay) {
+            uniqueMondays.push(monday);
         }
     });
 
     return uniqueMondays;
+}
+// Convert an array of date to locale string
+function convertDate(dates) {
+    output = [];
+    const options = { day: "2-digit", month: "short", year: "numeric" };
+
+    dates.forEach((date) => {
+        const dateString = date
+            .toLocaleDateString("en-GB", options)
+            .replace(",", "");
+        output.push(dateString);
+    });
+
+    return output;
 }
 
 document.addEventListener("alpine:init", () => {
@@ -76,10 +89,11 @@ document.addEventListener("alpine:init", () => {
         selectedDay: "",
         selectedWeek: "",
         days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-        weeks: null,
         newPerson: { name: "", course: "", group: "" },
         people: [],
         timetable: null,
+        uniqueIntakes: [],
+        weeks: null,
 
         init() {
             this.fetchTimetable();
@@ -90,16 +104,105 @@ document.addEventListener("alpine:init", () => {
                 const rawData = await fetchJson(API_ROUTE);
 
                 this.timetable = sortTimetable(rawData);
+
                 this.weeks = getMonday(this.timetable);
+
+                if (rawData && rawData.length > 0) {
+                    // 1. Map all intakes, trim whitespace (your data has a leading space!)
+                    const allIntakes = rawData.map((slot) =>
+                        slot.INTAKE.trim(),
+                    );
+
+                    // 2. Use a Set to remove duplicates, then convert back to array and sort
+                    this.uniqueIntakes = [...new Set(allIntakes)].sort();
+                }
             } catch (e) {
                 console.log("Failed to get timetable from APU", e);
             }
         },
 
+        addPerson() {
+            if (
+                this.newPerson.name &&
+                this.newPerson.course &&
+                this.newPerson.group
+            ) {
+                // Add into people
+                this.people.push({
+                    name: this.newPerson.name,
+                    course: this.newPerson.course.toUpperCase(),
+                    group: this.newPerson.group.toUpperCase(),
+                });
+                this.newPerson = {
+                    name: "",
+                    course: "",
+                    group: "",
+                };
+                // remove free time
+            }
+        },
+
+        resetForm() {
+            this.newPerson = {
+                name: "",
+                course: "",
+                group: "",
+            };
+        },
+
+        removePerson(index) {
+            this.people.splice(index, 1);
+            // remove free time
+        },
+
+        filterClass(intakeCode, group) {
+            filtered = [];
+            if (!this.selectedDay || !this.selectedWeek) {
+                console.log(
+                    "No day or class selected, ",
+                    this.selectedDay,
+                    this.selectedWeek,
+                );
+                return filtered;
+            }
+
+            this.timetable.forEach((slot) => {
+                const targetDateString =
+                    this.selectedDate.toLocaleDateString("en-CA");
+                if (
+                    slot.DATESTAMP_ISO === targetDateString && // check date
+                    slot.INTAKE === intakeCode && // check intake code
+                    slot.GROUPING === group //check group
+                ) {
+                    filtered.push(slot);
+                }
+            });
+            return filtered;
+        },
+
+        get selectedDate() {
+            // Check if day or week are selected
+            if (!this.selectedDay || !this.selectedWeek) {
+                console.log(
+                    "No day or class selected, ",
+                    this.selectedDay,
+                    this.selectedWeek,
+                );
+                return null;
+            }
+            d = DAY_MAP[this.selectedDay];
+
+            daysToAdd = d - 1;
+            selected = new Date(this.selectedWeek);
+            selected.setDate(selected.getDate() + daysToAdd);
+            return selected;
+        },
+
         testing() {
-            console.log("Week");
-            console.log("Last item = ", this.timetable.at(-1));
-            console.log(this.weeks);
+            console.log(!this.selectedDay);
+            console.log(!this.selectedWeek);
+            console.log(this.filterClass("AFCF2507AS"));
+            console.log("Selected ", this.selectedDate);
         },
     }));
 });

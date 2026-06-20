@@ -265,7 +265,8 @@ body {
 
 .timetable-person-col {
     display: grid;
-    grid-template-rows: 60px repeat(2, 80px);
+    grid-template-rows: 60px;
+    grid-auto-rows: 80px;
     grid-row-gap: 0;
     border-right: 2px solid var(--text-800);
     padding-left: 1rem;
@@ -363,7 +364,7 @@ body {
 }
 
 .person-tag {
-    height: min-content;
+    height: 60px;
     background: var(--background-50);
     border: 2px solid var(--text-900);
     border-radius: 12px;
@@ -377,11 +378,19 @@ body {
     font-weight: 700;
     font-size: 0.875rem;
     color: var(--text-900);
+    width: 9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .person-tag-course {
     font-size: 0.625rem;
     color: var(--text-600);
+    width: 9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .current-time-line {
@@ -480,10 +489,6 @@ body {
     border-color: var(--c6);
 }
 
-.person-item:last-child {
-    margin-bottom: 0;
-}
-
 .person-item-info {
     flex: 1;
 }
@@ -492,11 +497,19 @@ body {
     font-weight: 700;
     font-size: 0.875rem;
     color: var(--text-900);
+    max-width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .person-item-course {
     font-size: 0.625rem;
     color: var(--text-600);
+    max-width: 220px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .person-item-remove {
