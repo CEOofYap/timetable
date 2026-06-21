@@ -277,7 +277,6 @@ body {
     height: 60px;
     display: grid;
     grid-template-columns: repeat(12, minmax(100px, 1fr));
-    border-bottom: 1px solid var(--background-300);
 }
 
 .timetable-hour-label {
@@ -285,6 +284,7 @@ body {
     font-size: 0.75rem;
     font-weight: 600;
     color: var(--text-600);
+    border-bottom: 1px solid var(--background-300);
 
     padding-top: 0.25rem;
     border-right: 1px solid var(--background-300);
@@ -339,9 +339,10 @@ body {
 }
 
 .card-pos {
+    /* depend on the length of the class */
     width: 200px;
-    top: 80px; /* multiple of 80px since the height is 80, it should depends on the order of the student */
-    left: 50px;
+    /* depend on the starting time */
+    left: 0px;
 }
 
 .event-card-title {

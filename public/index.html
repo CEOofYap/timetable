@@ -174,7 +174,7 @@
                 <section class="timetable-container">
                     <div class="timetable-person-col">
                         <!-- empty space -->
-                        <div style="height: 60px"></div>
+                        <div style="height: 60px; min-width: 100px"></div>
                         <template x-for="person in people">
                             <div class="person-tag">
                                 <div
@@ -227,24 +227,33 @@
 
                         <div class="timetable-grid">
                             <template x-for="i in 12">
-                                <div class="timetable-col">
+                                <div class="timetable-col" x-ref="cols">
                                     <template x-for="p in people">
-                                        <div class="timetable-grid-line"></div>
-                                        <div class="timetable-grid-line"></div>
+                                        <div class="timetable-grid-line">
+                                            <template x-if="haveClass(i, p)">
+                                                <div
+                                                    class="event-card card-pos"
+                                                    x-data="{slot: getClass(i, p)}"
+                                                    :style="getEventStyles(slot.TIME_FROM, slot.TIME_TO)"
+                                                >
+                                                    <div
+                                                        class="event-card-title"
+                                                        x-text="slot.MODID"
+                                                    ></div>
+                                                    <div
+                                                        class="event-card-subtitle"
+                                                        x-text="slot.MODULE_NAME"
+                                                    ></div>
+                                                    <div
+                                                        class="event-card-time"
+                                                        x-text="slot.TIME_FROM + ' - ' + slot.TIME_TO"
+                                                    ></div>
+                                                </div>
+                                            </template>
+                                        </div>
                                     </template>
                                 </div>
                             </template>
-                            <div class="event-card card-pos">
-                                <div class="event-card-title">
-                                    DBMS301-4-1-SQL
-                                </div>
-                                <div class="event-card-subtitle">
-                                    Database Management
-                                </div>
-                                <div class="event-card-time">
-                                    8:30AM - 10:30AM
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </section>

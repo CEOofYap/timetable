@@ -82,6 +82,36 @@ function convertDate(dates) {
     return output;
 }
 
+function computeClassMap(sortedClassSlots) {
+    const computedClass = new Map();
+
+    sortedClassSlots.forEach((slot) => {
+        const intake = slot.INTAKE;
+        const date = slot.DATESTAMP_ISO;
+        const group = slot.GROUPING;
+        // Check if the computed alr have the intake
+        let groupMap = computedClass.get(intake);
+        if (!groupMap) {
+            groupMap = new Map();
+            computedClass.set(intake, groupMap);
+        }
+        // check if alr have group
+        let dateMap = groupMap.get(group);
+        if (!dateMap) {
+            dateMap = new Map();
+            groupMap.set(group, dateMap);
+        }
+        // Check if alr have date
+        let classArray = dateMap.get(date);
+        if (!classArray) {
+            classArray = [];
+            dateMap.set(date, classArray);
+        }
+        classArray.push(slot);
+    });
+    return computedClass;
+}
+
 document.addEventListener("alpine:init", () => {
     document.documentElement.setAttribute("data-theme", "light");
     Alpine.data("timetableApp", () => ({
@@ -91,9 +121,52 @@ document.addEventListener("alpine:init", () => {
         days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
         newPerson: { name: "", course: "", group: "" },
         people: [],
-        timetable: null,
+        sortedClasses: null,
         uniqueIntakes: [],
         weeks: null,
+        precompute: null,
+        mockData: [
+            {
+                INTAKE: "AFCF2507AS",
+                MODID: "AAQS006-3-C-BF-T-2",
+                MODULE_NAME: "Basic Finance",
+                DAY: "MON",
+                LOCATION: "APU CAMPUS",
+                ROOM: "E-08-09",
+                LECTID: "LLY",
+                NAME: "LOUISE LEE LAI YOONG",
+                SAMACCOUNTNAME: "louise.lee",
+                DATESTAMP: "15-JUN-26",
+                DATESTAMP_ISO: "2026-06-15",
+                TIME_FROM: "01:45 PM",
+                TIME_TO: "02:45 PM",
+                TIME_FROM_ISO: "2026-06-15T13:45:00+08:00",
+                TIME_TO_ISO: "2026-06-15T14:45:00+08:00",
+                GROUPING: "G1",
+                CLASS_CODE: "SAFI___AAQS006-3-C-BF-T-2___2026-05-18",
+                COLOR: "yellow",
+            },
+            {
+                INTAKE: "AFCF2507AS",
+                MODID: "AAQS006-3-C-BF-L-2",
+                MODULE_NAME: "Basic Finance",
+                DAY: "MON",
+                LOCATION: "APU CAMPUS",
+                ROOM: "E-08-03",
+                LECTID: "LLY",
+                NAME: "LOUISE LEE LAI YOONG",
+                SAMACCOUNTNAME: "louise.lee",
+                DATESTAMP: "15-JUN-26",
+                DATESTAMP_ISO: "2026-06-15",
+                TIME_FROM: "03:15 PM",
+                TIME_TO: "05:15 PM",
+                TIME_FROM_ISO: "2026-06-15T15:15:00+08:00",
+                TIME_TO_ISO: "2026-06-15T17:15:00+08:00",
+                GROUPING: "G1",
+                CLASS_CODE: "SAFI___AAQS006-3-C-BF-L-2___2026-05-18",
+                COLOR: "yellow",
+            },
+        ],
 
         init() {
             this.fetchTimetable();
@@ -103,9 +176,9 @@ document.addEventListener("alpine:init", () => {
             try {
                 const rawData = await fetchJson(API_ROUTE);
 
-                this.timetable = sortTimetable(rawData);
-
-                this.weeks = getMonday(this.timetable);
+                this.sortedClasses = sortTimetable(rawData);
+                this.precompute = computeClassMap(this.sortedClasses);
+                this.weeks = getMonday(this.sortedClasses);
 
                 if (rawData && rawData.length > 0) {
                     // 1. Map all intakes, trim whitespace (your data has a leading space!)
@@ -155,31 +228,6 @@ document.addEventListener("alpine:init", () => {
             // remove free time
         },
 
-        filterClass(intakeCode, group) {
-            filtered = [];
-            if (!this.selectedDay || !this.selectedWeek) {
-                console.log(
-                    "No day or class selected, ",
-                    this.selectedDay,
-                    this.selectedWeek,
-                );
-                return filtered;
-            }
-
-            this.timetable.forEach((slot) => {
-                const targetDateString =
-                    this.selectedDate.toLocaleDateString("en-CA");
-                if (
-                    slot.DATESTAMP_ISO === targetDateString && // check date
-                    slot.INTAKE === intakeCode && // check intake code
-                    slot.GROUPING === group //check group
-                ) {
-                    filtered.push(slot);
-                }
-            });
-            return filtered;
-        },
-
         get selectedDate() {
             // Check if day or week are selected
             if (!this.selectedDay || !this.selectedWeek) {
@@ -198,22 +246,120 @@ document.addEventListener("alpine:init", () => {
             return selected;
         },
 
+        getColumnWidth() {
+            const cols = this.$refs.cols;
+
+            // 1. If the ref doesn't exist yet, return fallback
+            if (!cols) {
+                console.log("No col get");
+                return 100;
+            }
+
+            // 2. Safely extract the first element.
+            // If it's an array, grab [0]. If it's already a single element, just use it.
+            const firstCol = Array.isArray(cols) ? cols[0] : cols;
+
+            // 3. Final safety check before measuring
+            if (!firstCol) return 100;
+
+            return firstCol.getBoundingClientRect().width;
+        },
+
+        // Helper to parse "8:30 AM" into 8.5
+        parseTime(timeStr) {
+            const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+            let hours = parseInt(match[1]);
+            const minutes = parseInt(match[2]);
+            const period = match[3].toUpperCase();
+
+            if (period === "PM" && hours !== 12) hours += 12;
+            if (period === "AM" && hours === 12) hours = 0;
+
+            return hours + minutes / 60;
+        },
+
+        getEventStyles(startTime, endTime) {
+            const colWidth = this.getColumnWidth();
+
+            const startDecimal = this.parseTime(startTime);
+            const endDecimal = this.parseTime(endTime);
+
+            // Calculate how many hours past 8:00 AM the event starts
+            const hoursFromStart = startDecimal - Math.floor(startDecimal);
+
+            // Calculate total duration in hours
+            const duration = endDecimal - startDecimal;
+
+            // Multiply hours by the exact pixel width of the column
+            const leftPixels = hoursFromStart * colWidth;
+            const widthPixels = duration * colWidth;
+
+            // Return the CSS string
+            return `left: ${leftPixels}px; width: ${widthPixels}px;`;
+        },
+
+        // Determine whether the column got class or not
+        haveClass(col, person) {
+            if (!this.selectedDate) {
+                return false;
+            }
+
+            const course = person.course;
+            const group = person.group;
+            const dateStr = this.selectedDate.toISOString().substring(0, 10);
+            const classes = this.precompute
+                ?.get(course)
+                ?.get(group)
+                ?.get(dateStr);
+
+            if (!classes) {
+                console.log("No class for this date", dateStr);
+                return false;
+            }
+
+            // Go through every class on that day and determine if theres any class on the specific column
+            return classes.some((slot) => {
+                const slotHour = Math.floor(this.parseTime(slot.TIME_FROM));
+                return slotHour - 6 === col;
+            });
+        },
+
+        getClass(col, person) {
+            if (!this.selectedDate) {
+                return null;
+            }
+
+            const course = person.course;
+            const group = person.group;
+            const dateStr = this.selectedDate.toISOString().substring(0, 10);
+            const classes = this.precompute
+                ?.get(course)
+                ?.get(group)
+                ?.get(dateStr);
+
+            if (!classes) {
+                console.log("No class for this date", dateStr);
+                return null;
+            }
+
+            // Go through every class on that day and determine if theres any class on the specific column
+            return classes.find((slot) => {
+                const slotHour = Math.floor(this.parseTime(slot.TIME_FROM));
+                return slotHour - 6 === col;
+            });
+        },
+
         testing() {
-            console.log(!this.selectedDay);
-            console.log(!this.selectedWeek);
-            console.log(this.filterClass("AFCF2507AS"));
-            console.log("Selected ", this.selectedDate);
+            console.log(
+                this.getClass(7, {
+                    name: "a",
+                    course: "AFCF2507AS",
+                    group: "G1",
+                }),
+            );
         },
     }));
 });
-
-// 1. Get the monday of this week as the first week
-// 2. Sort it first
-// 3. Load the monday of the last class in the data
-// 4. Fill in the blank
-
-// 1. Aggregate the classes by each week
-// 2.
 
 // example data
 // API route: https://s3-ap-southeast-1.amazonaws.com/open-ws/weektimetable
