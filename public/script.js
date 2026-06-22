@@ -112,6 +112,20 @@ function computeClassMap(sortedClassSlots) {
     return computedClass;
 }
 
+function saveLocal(key, value) {
+    localStorage.setItem(key, JSON.stringify(value));
+}
+
+function loadLocal(key) {
+    try {
+        const raw = localStorage.getItem(key);
+        if (raw) return JSON.parse(raw);
+        return [];
+    } catch (e) {
+        console.warn("Failed to load ", key, e);
+    }
+}
+
 document.addEventListener("alpine:init", () => {
     document.documentElement.setAttribute("data-theme", "light");
     Alpine.data("timetableApp", () => ({
@@ -125,51 +139,15 @@ document.addEventListener("alpine:init", () => {
         uniqueIntakes: [],
         weeks: null,
         precompute: null,
-        mockData: [
-            {
-                INTAKE: "AFCF2507AS",
-                MODID: "AAQS006-3-C-BF-T-2",
-                MODULE_NAME: "Basic Finance",
-                DAY: "MON",
-                LOCATION: "APU CAMPUS",
-                ROOM: "E-08-09",
-                LECTID: "LLY",
-                NAME: "LOUISE LEE LAI YOONG",
-                SAMACCOUNTNAME: "louise.lee",
-                DATESTAMP: "15-JUN-26",
-                DATESTAMP_ISO: "2026-06-15",
-                TIME_FROM: "01:45 PM",
-                TIME_TO: "02:45 PM",
-                TIME_FROM_ISO: "2026-06-15T13:45:00+08:00",
-                TIME_TO_ISO: "2026-06-15T14:45:00+08:00",
-                GROUPING: "G1",
-                CLASS_CODE: "SAFI___AAQS006-3-C-BF-T-2___2026-05-18",
-                COLOR: "yellow",
-            },
-            {
-                INTAKE: "AFCF2507AS",
-                MODID: "AAQS006-3-C-BF-L-2",
-                MODULE_NAME: "Basic Finance",
-                DAY: "MON",
-                LOCATION: "APU CAMPUS",
-                ROOM: "E-08-03",
-                LECTID: "LLY",
-                NAME: "LOUISE LEE LAI YOONG",
-                SAMACCOUNTNAME: "louise.lee",
-                DATESTAMP: "15-JUN-26",
-                DATESTAMP_ISO: "2026-06-15",
-                TIME_FROM: "03:15 PM",
-                TIME_TO: "05:15 PM",
-                TIME_FROM_ISO: "2026-06-15T15:15:00+08:00",
-                TIME_TO_ISO: "2026-06-15T17:15:00+08:00",
-                GROUPING: "G1",
-                CLASS_CODE: "SAFI___AAQS006-3-C-BF-L-2___2026-05-18",
-                COLOR: "yellow",
-            },
-        ],
+        freetime: [[8, 18]],
+        showFreetime: false,
+        showIntakeDropdown: false,
 
         init() {
             this.fetchTimetable();
+            this.people = loadLocal("people");
+            this.$watch("selectedDay", (value) => this.resetFreetime());
+            this.$watch("selectedWeek", (value) => this.resetFreetime());
         },
 
         async fetchTimetable() {
@@ -211,7 +189,9 @@ document.addEventListener("alpine:init", () => {
                     course: "",
                     group: "",
                 };
+                saveLocal("people", this.people);
                 // remove free time
+                this.resetFreetime();
             }
         },
 
@@ -225,17 +205,14 @@ document.addEventListener("alpine:init", () => {
 
         removePerson(index) {
             this.people.splice(index, 1);
+            saveLocal("people", this.people);
             // remove free time
+            this.resetFreetime();
         },
 
         get selectedDate() {
             // Check if day or week are selected
             if (!this.selectedDay || !this.selectedWeek) {
-                console.log(
-                    "No day or class selected, ",
-                    this.selectedDay,
-                    this.selectedWeek,
-                );
                 return null;
             }
             d = DAY_MAP[this.selectedDay];
@@ -267,6 +244,7 @@ document.addEventListener("alpine:init", () => {
 
         // Helper to parse "8:30 AM" into 8.5
         parseTime(timeStr) {
+            if (!timeStr) return 0;
             const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
             let hours = parseInt(match[1]);
             const minutes = parseInt(match[2]);
@@ -284,6 +262,22 @@ document.addEventListener("alpine:init", () => {
             const startDecimal = this.parseTime(startTime);
             const endDecimal = this.parseTime(endTime);
 
+            // Calculate how many hours past 8:00 AM the event starts
+            const hoursFromStart = startDecimal - Math.floor(startDecimal);
+
+            // Calculate total duration in hours
+            const duration = endDecimal - startDecimal;
+
+            // Multiply hours by the exact pixel width of the column
+            const leftPixels = hoursFromStart * colWidth;
+            const widthPixels = duration * colWidth;
+
+            // Return the CSS string
+            return `left: ${leftPixels}px; width: ${widthPixels}px;`;
+        },
+
+        getFreetimeStyles(startDecimal, endDecimal) {
+            const colWidth = this.getColumnWidth();
             // Calculate how many hours past 8:00 AM the event starts
             const hoursFromStart = startDecimal - Math.floor(startDecimal);
 
@@ -349,14 +343,134 @@ document.addEventListener("alpine:init", () => {
             });
         },
 
-        testing() {
-            console.log(
-                this.getClass(7, {
-                    name: "a",
-                    course: "AFCF2507AS",
-                    group: "G1",
-                }),
+        cutTime(startTime, endTime) {
+            const startDecimal = this.parseTime(startTime);
+            const endDecimal = this.parseTime(endTime);
+
+            const newFreeTime = [];
+            this.freetime.forEach((section) => {
+                sectionStart = section[0];
+                sectionEnd = section[1];
+
+                // Check if start time inside the section
+                if (startDecimal >= sectionStart && startDecimal < sectionEnd) {
+                    // Check if end time inside the section
+                    if (endDecimal < sectionEnd) {
+                        // Add sectionStart to start and end to sectionEnd into newTime
+                        newFreeTime.push([sectionStart, startDecimal]);
+                        newFreeTime.push([endDecimal, sectionEnd]);
+                    } else {
+                        // Add old section but cut off until start
+                        newFreeTime.push([sectionStart, startDecimal]);
+                    }
+                    // Check if the end time inside section
+                } else if (
+                    endDecimal > sectionStart &&
+                    endDecimal <= sectionEnd
+                ) {
+                    // Trim off the front
+                    newFreeTime.push([endDecimal, sectionEnd]);
+                    // Check if the section is outside of start and end time
+                } else if (
+                    sectionStart >= endDecimal ||
+                    sectionEnd <= startDecimal
+                ) {
+                    // Add into newFreeTime without changing anything
+                    newFreeTime.push([sectionStart, sectionEnd]);
+                }
+            });
+            this.freetime = newFreeTime;
+        },
+
+        get activeSlots() {
+            if (!this.selectedDate || !this.people.length) return [];
+
+            const dateStr = this.selectedDate.toLocaleDateString("en-CA"); // "YYYY-MM-DD"
+            const allVisibleSlots = [];
+
+            // Loop through every person currently in the sidebar
+            this.people.forEach((person) => {
+                const course = person.course;
+                const group = person.group;
+
+                // Safely grab the classes for this person on this specific date
+                const classes =
+                    this.precompute?.get(course)?.get(group)?.get(dateStr) ||
+                    [];
+
+                // Add them to our master list
+                allVisibleSlots.push(...classes);
+            });
+
+            return allVisibleSlots;
+        },
+
+        haveFreetime(col) {
+            if (!this.selectedDate) {
+                return false;
+            }
+            const freetime = this.freetime;
+            if (freetime.length === 0) {
+                console.log("No free time for this date");
+                return false;
+            }
+
+            // Go through every freetime on that day and determine if theres any class on the specific column
+            return freetime.find((slot) => {
+                const slotHour = Math.floor(slot[0]);
+                return slotHour - 6 === col;
+            });
+        },
+
+        getFreetime(col) {
+            if (!this.selectedDate) {
+                return null;
+            }
+
+            const freetime = this.freetime;
+            if (freetime.length === 0) {
+                return null;
+            }
+
+            // Go through every slot
+            return freetime.find((slot) => {
+                const slotHour = Math.floor(slot[0]);
+                return slotHour - 6 === col;
+            });
+        },
+
+        calcFreetime() {
+            this.showFreetime = true;
+
+            const slots = this.activeSlots;
+            slots.forEach((slot) => {
+                console.log("Cutting slot ", slot);
+                this.cutTime(slot.TIME_FROM, slot.TIME_TO);
+            });
+        },
+
+        resetFreetime() {
+            this.freetime = [[8, 18]];
+            this.showFreetime = false;
+        },
+
+        get filteredIntakes() {
+            if (!this.newPerson.course) return this.uniqueIntakes;
+
+            return this.uniqueIntakes.filter((intake) =>
+                intake
+                    .toLowerCase()
+                    .includes(this.newPerson.course.toLowerCase()),
             );
+        },
+
+        selectIntake(code) {
+            this.newPerson.course = code;
+            this.showIntakeDropdown = false;
+        },
+
+        testing() {
+            console.log(this.freetime);
         },
     }));
 });

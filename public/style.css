@@ -111,7 +111,6 @@ body {
     border-radius: 24px;
     border: 4px solid var(--text-900);
     background: var(--background-200);
-    overflow: hidden;
     box-shadow: 6px 6px 0 var(--text-900);
     width: min-content;
 }
@@ -123,6 +122,8 @@ body {
     justify-content: flex-end;
     gap: 0.5rem;
     border-bottom: 3px solid var(--text-900);
+    border-top-left-radius: 24px;
+    border-top-right-radius: 24px;
 }
 
 .retro-btn {
@@ -192,6 +193,66 @@ body {
 
 .form-input::placeholder {
     color: var(--text-500);
+}
+
+.form-autocomplete {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 4px;
+    background: var(--background-50);
+    border: 3px solid var(--text-900);
+    border-radius: 8px;
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 50;
+    box-shadow: 4px 4px 0 var(--text-900);
+    list-style: none;
+    padding: 0;
+}
+
+.form-autocomplete-item {
+    padding: 0.625rem 0.75rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-900);
+    border-bottom: 1px solid var(--background-200);
+}
+
+/* --- ENTER ANIMATION (Dropdown slides down and fades in) --- */
+.dropdown-enter {
+    transition:
+        opacity 0.2s ease-out,
+        transform 0.2s ease-out;
+}
+
+.dropdown-enter-start {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.dropdown-enter-end {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --- LEAVE ANIMATION (Dropdown slides up and fades out) --- */
+.dropdown-leave {
+    transition:
+        opacity 0.15s ease-in,
+        transform 0.15s ease-in;
+}
+
+.dropdown-leave-start {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.dropdown-leave-end {
+    opacity: 0;
+    transform: translateY(-10px);
 }
 
 .form-actions {
@@ -336,6 +397,47 @@ body {
     overflow: hidden;
     z-index: 10;
     box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+
+    animation-name: bounce;
+    animation-duration: 0.75s;
+}
+
+@keyframes bounce {
+    0% {
+        scale: 0;
+    }
+    40% {
+        scale: 1.2;
+    }
+    65% {
+        scale: 0.9;
+    }
+
+    100% {
+        scale: 1;
+    }
+}
+
+.bounce-leave {
+    animation-name: bounce-leave;
+    animation-duration: 0.75s;
+    animation-fill-mode: forwards;
+}
+
+@keyframes bounce-leave {
+    0% {
+        scale: 1;
+    }
+    40% {
+        scale: 0.9;
+    }
+    65% {
+        scale: 1.2;
+    }
+
+    100% {
+        scale: 0;
+    }
 }
 
 .card-pos {
@@ -373,6 +475,9 @@ body {
     z-index: 5;
     box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
     align-self: center;
+
+    animation-name: bounce;
+    animation-duration: 0.75s;
 }
 
 .person-tag-name {
@@ -464,6 +569,9 @@ body {
     box-sizing: border-box; /* Ensures padding/borders don't add to the height */
 
     scroll-snap-align: start;
+
+    animation-name: bounce;
+    animation-duration: 0.75s;
 }
 
 .person-item:nth-child(6n + 1) {
@@ -522,6 +630,14 @@ body {
     font-size: 0.625rem;
     font-weight: 700;
     cursor: pointer;
+}
+
+.free-time-slot {
+    position: absolute;
+    background-color: rgb(121, 220, 121);
+    opacity: 50%;
+    width: 90px;
+    height: 80px;
 }
 
 .free-time-section {

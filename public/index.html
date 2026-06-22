@@ -61,7 +61,7 @@
                                     ></option>
                                 </template>
                             </select>
-                            <button @click="testing()">Button to test</button>
+                            <!-- <button @click="testing()">Button to test</button> -->
                         </div>
                     </div>
                     <!-- Window for adding student -->
@@ -99,13 +99,43 @@
                             </div>
                             <div class="form-row">
                                 <label class="form-label">Intake Code: </label>
-                                <input
-                                    class="form-input"
-                                    type="text"
-                                    placeholder="e.g. UCDF2509ICT(SE)"
-                                    x-model="newPerson.course"
-                                    autocomplete="off"
-                                />
+                                <div style="flex: 1; position: relative">
+                                    <input
+                                        class="form-input"
+                                        type="text"
+                                        placeholder="e.g. UCDF2509ICT(SE)"
+                                        x-model="newPerson.course"
+                                        autocomplete="off"
+                                        @input="showIntakeDropdown = true"
+                                        @focus="showIntakeDropdown = true"
+                                        @click.outside="showIntakeDropdown = false"
+                                    />
+
+                                    <!-- Autocomplete Dropdown -->
+                                    <ul
+                                        x-show="showIntakeDropdown && filteredIntakes.length > 0"
+                                        x-transition:enter="dropdown-enter"
+                                        x-transition:enter-start="dropdown-enter-start"
+                                        x-transition:enter-end="dropdown-enter-end"
+                                        x-transition:leave="dropdown-leave"
+                                        x-transition:leave-start="dropdown-leave-start"
+                                        x-transition:leave-end="dropdown-leave-end"
+                                        class="form-autocomplete"
+                                    >
+                                        <template
+                                            x-for="intake in filteredIntakes"
+                                            :key="intake"
+                                        >
+                                            <li
+                                                @click="selectIntake(intake)"
+                                                class="form-autocomplete-item"
+                                                @mouseover="$el.style.background = 'var(--background-200)'"
+                                                @mouseout="$el.style.background = 'transparent'"
+                                                x-text="intake"
+                                            ></li>
+                                        </template>
+                                    </ul>
+                                </div>
                             </div>
                             <div class="form-row">
                                 <label class="form-label">Group: </label>
@@ -165,7 +195,7 @@
                     </div>
                     <div class="free-time-section">
                         <h3>Free Time</h3>
-                        <button class="free-time-btn">
+                        <button class="free-time-btn" @click="calcFreetime">
                             Calculate Free Time
                         </button>
                     </div>
@@ -235,20 +265,30 @@
                                                     class="event-card card-pos"
                                                     x-data="{slot: getClass(i, p)}"
                                                     :style="getEventStyles(slot.TIME_FROM, slot.TIME_TO)"
+                                                    x-transition:leave.duration.750ms
                                                 >
                                                     <div
                                                         class="event-card-title"
-                                                        x-text="slot.MODID"
+                                                        x-text="slot?.MODID"
                                                     ></div>
                                                     <div
                                                         class="event-card-subtitle"
-                                                        x-text="slot.MODULE_NAME"
+                                                        x-text="slot?.MODULE_NAME"
                                                     ></div>
                                                     <div
                                                         class="event-card-time"
-                                                        x-text="slot.TIME_FROM + ' - ' + slot.TIME_TO"
+                                                        x-text="slot?.TIME_FROM + ' - ' + slot?.TIME_TO"
                                                     ></div>
                                                 </div>
+                                            </template>
+                                            <template
+                                                x-if="haveFreetime(i) && showFreetime"
+                                            >
+                                                <div
+                                                    x-data="{freeslot: getFreetime(i)}"
+                                                    class="free-time-slot"
+                                                    :style="getFreetimeStyles(freeslot[0], freeslot[1])"
+                                                ></div>
                                             </template>
                                         </div>
                                     </template>
