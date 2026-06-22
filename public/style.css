@@ -59,7 +59,7 @@ body {
 .main-content {
     display: flex;
     flex: 1;
-    gap: 2rem;
+    gap: 3rem;
     padding: 0 2rem 2rem;
 }
 
