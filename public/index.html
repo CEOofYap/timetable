@@ -259,21 +259,19 @@
                                             <template x-if="haveClass(i, p)">
                                                 <div
                                                     class="event-card card-pos"
-                                                    x-data="{slot: getClass(i, p)}"
-                                                    :style="getEventStyles(slot.TIME_FROM, slot.TIME_TO)"
-                                                    x-transition:leave.duration.750ms
+                                                    :style="getEventStyles(getClass(i, p)?.TIME_FROM, getClass(i, p)?.TIME_TO)"
                                                 >
                                                     <div
                                                         class="event-card-title"
-                                                        x-text="slot?.MODID"
+                                                        x-text="getClass(i, p)?.MODID"
                                                     ></div>
                                                     <div
                                                         class="event-card-subtitle"
-                                                        x-text="slot?.MODULE_NAME"
+                                                        x-text="getClass(i, p)?.MODULE_NAME"
                                                     ></div>
                                                     <div
                                                         class="event-card-time"
-                                                        x-text="slot?.TIME_FROM + ' - ' + slot?.TIME_TO"
+                                                        x-text="getClass(i, p)?.TIME_FROM + ' - ' + getClass(i, p)?.TIME_TO"
                                                     ></div>
                                                 </div>
                                             </template>
@@ -281,9 +279,8 @@
                                                 x-if="haveFreetime(i) && showFreetime"
                                             >
                                                 <div
-                                                    x-data="{freeslot: getFreetime(i)}"
                                                     class="free-time-slot"
-                                                    :style="getFreetimeStyles(freeslot[0], freeslot[1])"
+                                                    :style="getFreetimeStyles(getFreetime(i)?.[0], getFreetime(i)?.[1])"
                                                 ></div>
                                             </template>
                                         </div>

@@ -146,8 +146,14 @@ document.addEventListener("alpine:init", () => {
         init() {
             this.fetchTimetable();
             this.people = loadLocal("people");
-            this.$watch("selectedDay", (value) => this.resetFreetime());
-            this.$watch("selectedWeek", (value) => this.resetFreetime());
+            this.$watch("selectedDay", (value) => {
+                this.resetFreetime();
+                this.restartAnimations();
+            });
+            this.$watch("selectedWeek", (value) => {
+                this.resetFreetime();
+                this.restartAnimations();
+            });
         },
 
         async fetchTimetable() {
@@ -467,6 +473,20 @@ document.addEventListener("alpine:init", () => {
         selectIntake(code) {
             this.newPerson.course = code;
             this.showIntakeDropdown = false;
+        },
+
+        restartAnimations() {
+            // Wait for Alpine to finish updating the DOM
+            this.$nextTick(() => {
+                document.querySelectorAll(".event-card").forEach((el) => {
+                    // Remove the animation
+                    el.style.animation = "none";
+                    // Force a reflow (this is the magic trick!)
+                    el.offsetHeight;
+                    // Re-apply the animation (empty string restores the CSS rule)
+                    el.style.animation = "";
+                });
+            });
         },
 
         testing() {
