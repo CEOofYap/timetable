@@ -142,6 +142,7 @@ document.addEventListener("alpine:init", () => {
         freetime: [[8, 18]],
         showFreetime: false,
         showIntakeDropdown: false,
+        selectedPerson: null,
 
         init() {
             this.fetchTimetable();
@@ -153,6 +154,9 @@ document.addEventListener("alpine:init", () => {
             this.$watch("selectedWeek", (value) => {
                 this.resetFreetime();
                 this.restartAnimations();
+            });
+            document.addEventListener("click", (e) => {
+                this.handleGlobalClick(e);
             });
         },
 
@@ -178,24 +182,65 @@ document.addEventListener("alpine:init", () => {
             }
         },
 
-        addPerson() {
+        handleGlobalClick(e) {
+            // Don't deselect if clicking on interactive elements
+            const interactiveElements = [
+                "INPUT",
+                "BUTTON",
+                "TEXTAREA",
+                "SELECT",
+                "LABEL",
+            ];
+
+            // Check if clicked element is interactive or inside one
+            let target = e.target;
+            while (target && target !== document.body) {
+                if (interactiveElements.includes(target.tagName)) {
+                    return; // Don't deselect
+                }
+                // Also check if it's inside the form or person list
+                if (
+                    target.classList.contains("retro-window-content") ||
+                    target.classList.contains("person-item") ||
+                    target.classList.contains("person-tag") ||
+                    target.closest(".retro-window-content") ||
+                    target.closest(".person-item") ||
+                    target.closest(".person-tag")
+                ) {
+                    return; // Don't deselect
+                }
+                target = target.parentElement;
+            }
+
+            // If we got here, it's a background click
+            this.deselectPerson();
+        },
+
+        savePerson() {
             if (
                 this.newPerson.name &&
                 this.newPerson.course &&
                 this.newPerson.group
             ) {
-                // Add into people
-                this.people.push({
+                const personData = {
                     name: this.newPerson.name,
                     course: this.newPerson.course.toUpperCase(),
                     group: this.newPerson.group.toUpperCase(),
-                });
+                };
+                // update ppl
+                if (this.selectedPerson !== null) {
+                    this.people[this.selectedPerson] = personData;
+                } else {
+                    // add into people
+                    this.people.push(personData);
+                }
                 this.newPerson = {
                     name: "",
                     course: "",
                     group: "",
                 };
                 saveLocal("people", this.people);
+                this.selectedPerson = null;
                 // remove free time
                 this.resetFreetime();
             }
@@ -210,10 +255,33 @@ document.addEventListener("alpine:init", () => {
         },
 
         removePerson(index) {
+            // check if the person removed is same as the selected person
+            if (this.selectedPerson === index) {
+                this.selectedPerson = null;
+                this.resetForm();
+            }
             this.people.splice(index, 1);
             saveLocal("people", this.people);
             // remove free time
             this.resetFreetime();
+        },
+
+        selectPerson(index) {
+            const SelectedP = this.people[index];
+            this.newPerson = {
+                name: SelectedP.name,
+                course: SelectedP.course,
+                group: SelectedP.group,
+            };
+            this.selectedPerson = index;
+        },
+
+        deselectPerson() {
+            if (this.selectedPerson === null) {
+                return;
+            }
+            this.selectedPerson = null;
+            this.resetForm();
         },
 
         get selectedDate() {
@@ -490,7 +558,7 @@ document.addEventListener("alpine:init", () => {
         },
 
         testing() {
-            console.log(this.freetime);
+            console.log(this.people);
         },
     }));
 });

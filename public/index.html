@@ -83,7 +83,11 @@
                             </div>
                         </div>
                         <div class="retro-window-content">
-                            <h3>Person:</h3>
+                            <h3>
+                                <span
+                                    x-text="selectedPerson !== null ? 'Edit person:' : 'Add new person:'"
+                                ></span>
+                            </h3>
                             <div class="form-row">
                                 <label class="form-label">Name: </label>
                                 <input
@@ -143,14 +147,21 @@
                                 />
                             </div>
                             <div class="form-actions">
-                                <button class="pill-btn add" @click="addPerson">
-                                    Add
+                                <button
+                                    class="pill-btn add"
+                                    @click="savePerson"
+                                >
+                                    <span
+                                        x-text="selectedPerson !== null ? 'Update' : 'Add'"
+                                    ></span>
                                 </button>
                                 <button
                                     class="pill-btn remove"
-                                    @click="resetForm"
+                                    @click="selectedPerson !== null ? removePerson(selectedPerson) : resetForm"
                                 >
-                                    Reset
+                                    <span
+                                        x-text="selectedPerson !== null ? 'Remove' : 'Reset'"
+                                    ></span>
                                 </button>
                             </div>
                         </div>
@@ -168,7 +179,11 @@
                                 x-for="(person, index) in people"
                                 :key="index"
                             >
-                                <div class="person-item">
+                                <div
+                                    class="person-item"
+                                    :class="{ 'is-selected': selectedPerson === index }"
+                                    @click="selectPerson(index)"
+                                >
                                     <div class="person-item-info">
                                         <div
                                             class="person-item-name"
@@ -201,8 +216,15 @@
                     <div class="timetable-person-col">
                         <!-- empty space -->
                         <div style="height: 60px; min-width: 100px"></div>
-                        <template x-for="person in people">
-                            <div class="person-tag">
+                        <template
+                            x-for="(person, index) in people"
+                            :key="index"
+                        >
+                            <div
+                                class="person-tag"
+                                :class="{ 'is-selected': selectedPerson === index }"
+                                @click="selectPerson(index)"
+                            >
                                 <div
                                     class="person-tag-name"
                                     x-text="person.name"

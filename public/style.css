@@ -480,6 +480,15 @@ body {
     animation-duration: 0.75s;
 }
 
+.person-tag:hover {
+    background: var(--background-100);
+    cursor: pointer;
+}
+
+.person-tag.is-selected {
+    background: var(--background-100);
+}
+
 .person-tag-name {
     font-weight: 700;
     font-size: 0.875rem;
@@ -572,6 +581,15 @@ body {
 
     animation-name: bounce;
     animation-duration: 0.75s;
+}
+
+.person-item:hover {
+    background: var(--background-100);
+    cursor: pointer;
+}
+
+.person-item.is-selected {
+    background: var(--background-100);
 }
 
 .person-item:nth-child(6n + 1) {
@@ -734,11 +752,6 @@ body {
 
     .event-card-title {
         font-size: 0.625rem;
-    }
-
-    .event-card-subtitle,
-    .event-card-time {
-        display: none;
     }
 }
 
