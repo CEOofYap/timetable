@@ -88,20 +88,20 @@
                 <div class="form-row">
                     <label class="form-label">Intake Code: </label>
                     <div class="intake-wrapper">
-                    <input class="form-input" type="text" placeholder="e.g. UCDF2509ICT(SE)"
-                        x-model="newPerson.course" autocomplete="off" @input="showIntakeDropdown = true"
-                        @focus="showIntakeDropdown = true" @click.outside="showIntakeDropdown = false" />
+                        <input class="form-input" type="text" placeholder="e.g. UCDF2509ICT(SE)"
+                            x-model="newPerson.course" autocomplete="off" @input="showIntakeDropdown = true"
+                            @focus="showIntakeDropdown = true" @click.outside="showIntakeDropdown = false" />
 
-                    <!-- Autocomplete Dropdown -->
-                    <ul x-show="showIntakeDropdown && filteredIntakes.length > 0"
-                        x-transition:enter="dropdown-enter" x-transition:enter-start="dropdown-enter-start"
-                        x-transition:enter-end="dropdown-enter-end" x-transition:leave="dropdown-leave"
-                        x-transition:leave-start="dropdown-leave-start" x-transition:leave-end="dropdown-leave-end"
-                        class="form-autocomplete">
-                        <template x-for="intake in filteredIntakes" :key="intake">
-                            <li @click="selectIntake(intake)" class="form-autocomplete-item" x-text="intake"></li>
-                        </template>
-                    </ul>
+                        <!-- Autocomplete Dropdown -->
+                        <ul x-show="showIntakeDropdown && filteredIntakes.length > 0"
+                            x-transition:enter="dropdown-enter" x-transition:enter-start="dropdown-enter-start"
+                            x-transition:enter-end="dropdown-enter-end" x-transition:leave="dropdown-leave"
+                            x-transition:leave-start="dropdown-leave-start" x-transition:leave-end="dropdown-leave-end"
+                            class="form-autocomplete">
+                            <template x-for="intake in filteredIntakes" :key="intake">
+                                <li @click="selectIntake(intake)" class="form-autocomplete-item" x-text="intake"></li>
+                            </template>
+                        </ul>
                     </div>
                 </div>
                 <div class="form-row">
@@ -202,10 +202,19 @@
                     <div class="timetable-hour-label">
                         <span class="">6 PM</span>
                     </div>
+                    <div class="timetable-hour-label">
+                        <span class="">7 PM</span>
+                    </div>
+                    <div class="timetable-hour-label">
+                        <span class="">8 PM</span>
+                    </div>
+                    <div class="timetable-hour-label">
+                        <span class="">9 PM</span>
+                    </div>
                 </div>
 
                 <div class="timetable-grid">
-                    <template x-for="i in 12">
+                    <template x-for="i in 16">
                         <div class="timetable-col" x-ref="cols">
                             <template x-for="p in people">
                                 <div class="timetable-grid-line">

@@ -136,7 +136,7 @@ document.addEventListener("alpine:init", () => {
         uniqueIntakes: [],
         weeks: null,
         precompute: null,
-        freetime: [[8, 18]],
+        freetime: [[8, 21]],
         showFreetime: true,
         showIntakeDropdown: false,
         selectedPerson: null,
@@ -357,7 +357,7 @@ document.addEventListener("alpine:init", () => {
 
         // Determine whether the column got class or not
         haveClass(col, person) {
-            return this.getClass(col, person) !== null;
+            return this.getClass(col, person) != null;
         },
 
         getClass(col, person) {
@@ -381,7 +381,7 @@ document.addEventListener("alpine:init", () => {
             return classes.find((slot) => {
                 const slotHour = Math.floor(this.parseTime(slot.TIME_FROM));
                 return slotHour - 6 === col;
-            });
+            }) ?? null;
         },
 
         cutTime(startTime, endTime) {
@@ -389,18 +389,35 @@ document.addEventListener("alpine:init", () => {
             const endDecimal = this.parseTime(endTime);
 
             const newFreeTime = [];
-            this.freetime.forEach(([sectionStart, sectionEnd]) => {
-                // Class entirely outside the section: keep it as-is
-                if (endDecimal <= sectionStart || startDecimal >= sectionEnd) {
-                    newFreeTime.push([sectionStart, sectionEnd]);
-                    return;
-                }
-                // Overlap: keep the parts of the section outside the class
-                if (startDecimal > sectionStart) {
-                    newFreeTime.push([sectionStart, startDecimal]);
-                }
-                if (endDecimal < sectionEnd) {
+            this.freetime.forEach((section) => {
+                const sectionStart = section[0];
+                const sectionEnd = section[1];
+
+                // Check if start time inside the section
+                if (startDecimal >= sectionStart && startDecimal < sectionEnd) {
+                    // Check if end time inside the section
+                    if (endDecimal < sectionEnd) {
+                        // Add sectionStart to start and end to sectionEnd into newTime
+                        newFreeTime.push([sectionStart, startDecimal]);
+                        newFreeTime.push([endDecimal, sectionEnd]);
+                    } else {
+                        // Add old section but cut off until start
+                        newFreeTime.push([sectionStart, startDecimal]);
+                    }
+                    // Check if the end time inside section
+                } else if (
+                    endDecimal > sectionStart &&
+                    endDecimal <= sectionEnd
+                ) {
+                    // Trim off the front
                     newFreeTime.push([endDecimal, sectionEnd]);
+                    // Check if the section is outside of start and end time
+                } else if (
+                    sectionStart >= endDecimal ||
+                    sectionEnd <= startDecimal
+                ) {
+                    // Add into newFreeTime without changing anything
+                    newFreeTime.push([sectionStart, sectionEnd]);
                 }
             });
             this.freetime = newFreeTime;
@@ -476,7 +493,7 @@ document.addEventListener("alpine:init", () => {
         },
 
         resetFreetime() {
-            this.freetime = [[8, 18]];
+            this.freetime = [[8, 21]];
         },
 
         get filteredIntakes() {

@@ -391,7 +391,7 @@ input:checked+.slider:before {
 .timetable-label-row {
     height: 60px;
     display: grid;
-    grid-template-columns: repeat(12, minmax(100px, 1fr));
+    grid-template-columns: repeat(15, minmax(100px, 1fr));
 }
 
 .timetable-hour-label {
@@ -428,7 +428,7 @@ input:checked+.slider:before {
     width: auto;
     display: grid;
     flex: 1;
-    grid-template-columns: repeat(12, minmax(100px, 1fr));
+    grid-template-columns: repeat(15, minmax(100px, 1fr));
     grid-column-gap: 0;
 }
 
