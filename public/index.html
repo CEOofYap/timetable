@@ -18,7 +18,7 @@
         <header class="header">
             <h1>Free Time Calculator (APU student only)</h1>
             <div>
-                <label for="theme">Theme: </label>
+                <label for="theme-selector">Theme: </label>
                 <select name="theme" id="theme-selector">
                     <option value="system" selected>System</option>
                     <option value="light">Light</option>
@@ -27,214 +27,211 @@
             </div>
         </header>
 
-        <main class="main-content">
-            <aside class="sidebar">
-                <!-- Select week and day stuff -->
-                <div class="selectors">
-                    <div class="selector-row">
-                        <label class="selector-label">Week: </label>
-                        <select class="custom-select" x-model="selectedWeek">
-                            <option value="" disabled selected>
-                                Select week
-                            </option>
-                            <template x-for="week in weeks">
-                                <option :value="week.toISOString()"
-                                    x-text="'Week of ' + week.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(',', '')">
-                                </option>
-                            </template>
-                        </select>
-                    </div>
-                    <div class="selector-row">
-                        <label class="selector-label">Day: </label>
-                        <select class="custom-select" x-model="selectedDay">
-                            <option value="" disabled selected>
-                                Select Day
-                            </option>
-                            <template x-for="day in days">
-                                <option :value="day.slice(0, 3).toUpperCase()" x-text="day"></option>
-                            </template>
-                        </select>
-                    </div>
+        <!-- Select week and day stuff -->
+        <div class="selectors">
+            <div class="selector-row">
+                <label class="selector-label">Week: </label>
+                <select class="custom-select" x-model="selectedWeek">
+                    <option value="" disabled selected>
+                        Select week
+                    </option>
+                    <template x-for="week in weeks">
+                        <option :value="week.toISOString()"
+                            x-text="'Week of ' + week.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(',', '')">
+                        </option>
+                    </template>
+                </select>
+            </div>
+            <div class="selector-row">
+                <label class="selector-label">Day: </label>
+                <select class="custom-select" x-model="selectedDay">
+                    <option value="" disabled selected>
+                        Select Day
+                    </option>
+                    <template x-for="day in days">
+                        <option :value="day.slice(0, 3).toUpperCase()" x-text="day"></option>
+                    </template>
+                </select>
+            </div>
+        </div>
+        <!-- Window for adding student -->
+        <div class="retro-window">
+            <div class="retro-window-header">
+                <div class="retro-btn">
+                    <!-- minimize -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 25 25">
+                        <path fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" d="M5 20H20" />
+                    </svg>
                 </div>
-                <!-- Window for adding student -->
-                <div class="retro-window">
-                    <div class="retro-window-header">
-                        <div class="retro-btn">
-                            <!-- minimize -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" fill="currentColor"
-                                viewBox="0 0 512 512">
-                                <path
-                                    d="M480 480H32c-17.7 0-32-14.3-32-32s14.3-32 32-32h448c17.7 0 32 14.3 32 32s-14.3 32-32 32" />
-                            </svg>
-                        </div>
-                        <div class="retro-btn">
-                            <!-- maximize -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 16 16">
-                                <path fill="currentColor" d="M1 2.75v10.5h14V2.75zm2 2h10v6.5H3z" />
-                            </svg>
-                        </div>
-                        <div class="retro-btn">
-                            <!-- close -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 25 25">
-                                <path fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"
-                                    d="M5 5l15 15M20 5L5 20" />
-                            </svg>
-                        </div>
-                    </div>
-                    <div class="retro-window-content">
-                        <h3>
-                            <span x-text="selectedPerson !== null ? 'Edit person:' : 'Add new person:'"></span>
-                        </h3>
-                        <div class="form-row">
-                            <label class="form-label">Name: </label>
-                            <input class="form-input" type="text" placeholder="e.g John" x-model="newPerson.name" />
-                        </div>
-                        <div class="form-row">
-                            <label class="form-label">Intake Code: </label>
-                            <div style="flex: 1; position: relative">
-                                <input class="form-input" type="text" placeholder="e.g. UCDF2509ICT(SE)"
-                                    x-model="newPerson.course" autocomplete="off" @input="showIntakeDropdown = true"
-                                    @focus="showIntakeDropdown = true" @click.outside="showIntakeDropdown = false" />
+                <div class="retro-btn">
+                    <!-- maximize -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 16 16">
+                        <path fill="currentColor" d="M1 2.75v10.5h14V2.75zm2 2h10v6.5H3z" />
+                    </svg>
+                </div>
+                <div class="retro-btn">
+                    <!-- close -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 25 25">
+                        <path fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"
+                            d="M5 5l15 15M20 5L5 20" />
+                    </svg>
+                </div>
+            </div>
+            <div class="retro-window-content">
+                <h3>
+                    <span x-text="selectedPerson !== null ? 'Edit person:' : 'Add new person:'"></span>
+                </h3>
+                <div class="form-row">
+                    <label class="form-label">Name: </label>
+                    <input class="form-input" type="text" placeholder="e.g John" x-model="newPerson.name" />
+                </div>
+                <div class="form-row">
+                    <label class="form-label">Intake Code: </label>
+                    <div class="intake-wrapper">
+                    <input class="form-input" type="text" placeholder="e.g. UCDF2509ICT(SE)"
+                        x-model="newPerson.course" autocomplete="off" @input="showIntakeDropdown = true"
+                        @focus="showIntakeDropdown = true" @click.outside="showIntakeDropdown = false" />
 
-                                <!-- Autocomplete Dropdown -->
-                                <ul x-show="showIntakeDropdown && filteredIntakes.length > 0"
-                                    x-transition:enter="dropdown-enter" x-transition:enter-start="dropdown-enter-start"
-                                    x-transition:enter-end="dropdown-enter-end" x-transition:leave="dropdown-leave"
-                                    x-transition:leave-start="dropdown-leave-start"
-                                    x-transition:leave-end="dropdown-leave-end" class="form-autocomplete">
-                                    <template x-for="intake in filteredIntakes" :key="intake">
-                                        <li @click="selectIntake(intake)" class="form-autocomplete-item"
-                                            @mouseover="$el.style.background = 'var(--background-200)'"
-                                            @mouseout="$el.style.background = 'transparent'" x-text="intake"></li>
-                                    </template>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <label class="form-label">Group: </label>
-                            <input class="form-input" type="text" placeholder="e.g G1" x-model="newPerson.group" />
-                        </div>
-                        <div class="form-actions">
-                            <button class="pill-btn add" @click="savePerson">
-                                <span x-text="selectedPerson !== null ? 'Update' : 'Add'"></span>
-                            </button>
-                            <button class="pill-btn remove"
-                                @click="selectedPerson !== null ? removePerson(selectedPerson) : resetForm">
-                                <span x-text="selectedPerson !== null ? 'Remove' : 'Reset'"></span>
-                            </button>
-                        </div>
+                    <!-- Autocomplete Dropdown -->
+                    <ul x-show="showIntakeDropdown && filteredIntakes.length > 0"
+                        x-transition:enter="dropdown-enter" x-transition:enter-start="dropdown-enter-start"
+                        x-transition:enter-end="dropdown-enter-end" x-transition:leave="dropdown-leave"
+                        x-transition:leave-start="dropdown-leave-start" x-transition:leave-end="dropdown-leave-end"
+                        class="form-autocomplete">
+                        <template x-for="intake in filteredIntakes" :key="intake">
+                            <li @click="selectIntake(intake)" class="form-autocomplete-item" x-text="intake"></li>
+                        </template>
+                    </ul>
                     </div>
                 </div>
-                <!-- Showing list of people -->
-                <div class="people-list">
-                    <h3>Enrolled people</h3>
-                    <div class="people-list-items">
-                        <template x-if="people.length === 0">
-                            <div class="people-list-empty">
-                                No people added yet
-                            </div>
-                        </template>
-                        <template x-for="(person, index) in people" :key="index">
-                            <div class="person-item" :class="{ 'is-selected': selectedPerson === index }"
-                                @click="selectPerson(index)">
-                                <div class="person-item-info">
-                                    <div class="person-item-name" x-text="person.name"></div>
-                                    <div class="person-item-course" x-text="person.course + '(' + person.group +')'">
-                                    </div>
-                                </div>
-                                <button class="person-item-remove" @click="removePerson(index)">
-                                    Remove
-                                </button>
-                            </div>
-                        </template>
-                    </div>
+                <div class="form-row">
+                    <label class="form-label">Group: </label>
+                    <input class="form-input" type="text" placeholder="e.g G1" x-model="newPerson.group" />
                 </div>
-                <div class="free-time-section">
-                    <h3>Free Time</h3>
-                    <button class="free-time-btn" @click="calcFreetime">
-                        Calculate Free Time
+                <div class="form-actions">
+                    <button class="pill-btn add" @click="savePerson">
+                        <span x-text="selectedPerson !== null ? 'Update' : 'Add'"></span>
+                    </button>
+                    <button class="pill-btn remove"
+                        @click="selectedPerson !== null ? removePerson(selectedPerson) : resetForm">
+                        <span x-text="selectedPerson !== null ? 'Remove' : 'Reset'"></span>
                     </button>
                 </div>
-            </aside>
-            <!-- Timetable part -->
-            <section class="timetable-container">
-                <div class="timetable-person-col">
-                    <!-- empty space -->
-                    <div style="height: 60px; min-width: 100px"></div>
-                    <template x-for="(person, index) in people" :key="index">
-                        <div class="person-tag" :class="{ 'is-selected': selectedPerson === index }"
-                            @click="selectPerson(index)">
-                            <div class="person-tag-name" x-text="person.name"></div>
-                            <div class="person-tag-course" x-text="person.course + '(' + person.group +')'"></div>
+            </div>
+        </div>
+        <!-- Showing list of people -->
+        <div class="people-list">
+            <h3>Enrolled people</h3>
+            <div class="people-list-items">
+                <template x-if="people.length === 0">
+                    <div class="people-list-empty">
+                        No people added yet
+                    </div>
+                </template>
+                <template x-for="(person, index) in people" :key="person.name + index">
+                    <div class="person-item" :class="{ 'is-selected': selectedPerson === index }"
+                        @click="selectPerson(index)">
+                        <div class="person-item-info">
+                            <div class="person-item-name" x-text="person.name"></div>
+                            <div class="person-item-course" x-text="person.course + '(' + person.group +')'">
+                            </div>
+                        </div>
+                        <button class="person-item-remove" @click="removePerson(index)">
+                            Remove
+                        </button>
+                    </div>
+                </template>
+            </div>
+        </div>
+        <div class="free-time-section">
+            <!-- <h3>Free Time</h3> -->
+            <!-- <button class="free-time-btn" @click="calcFreetime"> -->
+            <!--     Calculate Free Time -->
+            <!-- </button> -->
+            <label for="switch">Show free time:</label>
+            <label class="switch">
+                <input type="checkbox" id="switch" x-model="showFreetime">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <!-- Timetable part -->
+        <section class="timetable-container">
+            <div class="timetable-person-col">
+                <!-- empty space -->
+                <div style="height: 60px; min-width: 100px"></div>
+                <template x-for="(person, index) in people" :key="person.name + index">
+                    <div class="person-tag" :class="{ 'is-selected': selectedPerson === index }"
+                        @click="selectPerson(index)">
+                        <div class="person-tag-name" x-text="person.name"></div>
+                        <div class="person-tag-course" x-text="person.course + '(' + person.group +')'"></div>
+                    </div>
+                </template>
+            </div>
+            <div class="timetable-time">
+                <div class="timetable-label-row">
+                    <div class="timetable-hour-label">
+                        <span class="">8 AM</span>
+                    </div>
+                    <div class="timetable-hour-label">
+                        <span class="">9 AM</span>
+                    </div>
+                    <div class="timetable-hour-label">
+                        <span class="">10 AM</span>
+                    </div>
+                    <div class="timetable-hour-label">
+                        <span class="">11 AM</span>
+                    </div>
+                    <div class="timetable-hour-label">
+                        <span class="">12 PM</span>
+                    </div>
+                    <div class="timetable-hour-label">
+                        <span class="">1 PM</span>
+                    </div>
+                    <div class="timetable-hour-label">
+                        <span class="">2 PM</span>
+                    </div>
+                    <div class="timetable-hour-label">
+                        <span class="">3 PM</span>
+                    </div>
+                    <div class="timetable-hour-label">
+                        <span class="">4 PM</span>
+                    </div>
+                    <div class="timetable-hour-label">
+                        <span class="">5 PM</span>
+                    </div>
+                    <div class="timetable-hour-label">
+                        <span class="">6 PM</span>
+                    </div>
+                </div>
+
+                <div class="timetable-grid">
+                    <template x-for="i in 12">
+                        <div class="timetable-col" x-ref="cols">
+                            <template x-for="p in people">
+                                <div class="timetable-grid-line">
+                                    <template x-if="haveClass(i, p)">
+                                        <div class="event-card card-pos"
+                                            :style="getEventStyles(getClass(i, p)?.TIME_FROM, getClass(i, p)?.TIME_TO)">
+                                            <div class="event-card-title" x-text="getClass(i, p)?.MODID"></div>
+                                            <div class="event-card-subtitle" x-text="getClass(i, p)?.MODULE_NAME">
+                                            </div>
+                                            <div class="event-card-time"
+                                                x-text="getClass(i, p)?.TIME_FROM + ' - ' + getClass(i, p)?.TIME_TO">
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <template x-if="haveFreetime(i) && showFreetime">
+                                        <div class="free-time-slot"
+                                            :style="getFreetimeStyles(getFreetime(i)?.[0], getFreetime(i)?.[1])">
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
                         </div>
                     </template>
                 </div>
-                <div class="timetable-time">
-                    <div class="timetable-label-row">
-                        <div class="timetable-hour-label">
-                            <span class="">8 AM</span>
-                        </div>
-                        <div class="timetable-hour-label">
-                            <span class="">9 AM</span>
-                        </div>
-                        <div class="timetable-hour-label">
-                            <span class="">10 AM</span>
-                        </div>
-                        <div class="timetable-hour-label">
-                            <span class="">11 AM</span>
-                        </div>
-                        <div class="timetable-hour-label">
-                            <span class="">12 PM</span>
-                        </div>
-                        <div class="timetable-hour-label">
-                            <span class="">1 PM</span>
-                        </div>
-                        <div class="timetable-hour-label">
-                            <span class="">2 PM</span>
-                        </div>
-                        <div class="timetable-hour-label">
-                            <span class="">3 PM</span>
-                        </div>
-                        <div class="timetable-hour-label">
-                            <span class="">4 PM</span>
-                        </div>
-                        <div class="timetable-hour-label">
-                            <span class="">5 PM</span>
-                        </div>
-                        <div class="timetable-hour-label">
-                            <span class="">6 PM</span>
-                        </div>
-                    </div>
-
-                    <div class="timetable-grid">
-                        <template x-for="i in 12">
-                            <div class="timetable-col" x-ref="cols">
-                                <template x-for="p in people">
-                                    <div class="timetable-grid-line">
-                                        <template x-if="haveClass(i, p)">
-                                            <div class="event-card card-pos"
-                                                :style="getEventStyles(getClass(i, p)?.TIME_FROM, getClass(i, p)?.TIME_TO)">
-                                                <div class="event-card-title" x-text="getClass(i, p)?.MODID"></div>
-                                                <div class="event-card-subtitle" x-text="getClass(i, p)?.MODULE_NAME">
-                                                </div>
-                                                <div class="event-card-time"
-                                                    x-text="getClass(i, p)?.TIME_FROM + ' - ' + getClass(i, p)?.TIME_TO">
-                                                </div>
-                                            </div>
-                                        </template>
-                                        <template x-if="haveFreetime(i) && showFreetime">
-                                            <div class="free-time-slot"
-                                                :style="getFreetimeStyles(getFreetime(i)?.[0], getFreetime(i)?.[1])">
-                                            </div>
-                                        </template>
-                                    </div>
-                                </template>
-                            </div>
-                        </template>
-                    </div>
-                </div>
-            </section>
-        </main>
+            </div>
+        </section>
     </div>
 </body>
 
