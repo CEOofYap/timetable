@@ -1,5 +1,18 @@
 /// <reference lib="dom" />
 
+document.addEventListener("DOMContentLoaded", () => {
+    const themeSelector = document.getElementById("theme-selector");
+    const savedTheme = localStorage.getItem("theme");
+
+    if (savedTheme) {
+        themeSelector.value = savedTheme;
+    }
+
+    themeSelector.addEventListener("change", (e) => {
+        localStorage.setItem("theme", e.target.value);
+    });
+});
+
 const API_ROUTE =
     "https://s3-ap-southeast-1.amazonaws.com/open-ws/weektimetable";
 const DAY_MAP = {
@@ -38,8 +51,8 @@ function sortTimetable(timetable) {
 }
 
 function getWeek(classSlot) {
-    d = DAY_MAP[classSlot.DAY];
-    date = new Date(classSlot.DATESTAMP_ISO);
+    const d = DAY_MAP[classSlot.DAY];
+    const date = new Date(classSlot.DATESTAMP_ISO);
 
     const daysToSubtract = d - 1;
 
@@ -49,10 +62,10 @@ function getWeek(classSlot) {
 
 // Get monday
 function getMonday(classSlots) {
-    uniqueMondays = [];
+    const uniqueMondays = [];
 
     classSlots.forEach((slot) => {
-        monday = getWeek(slot);
+        const monday = getWeek(slot);
 
         const lastSavedMonday = uniqueMondays[uniqueMondays.length - 1];
 
@@ -68,20 +81,6 @@ function getMonday(classSlots) {
     return uniqueMondays;
 }
 // Convert an array of date to locale string
-function convertDate(dates) {
-    output = [];
-    const options = { day: "2-digit", month: "short", year: "numeric" };
-
-    dates.forEach((date) => {
-        const dateString = date
-            .toLocaleDateString("en-GB", options)
-            .replace(",", "");
-        output.push(dateString);
-    });
-
-    return output;
-}
-
 function computeClassMap(sortedClassSlots) {
     const computedClass = new Map();
 
@@ -127,15 +126,12 @@ function loadLocal(key) {
 }
 
 document.addEventListener("alpine:init", () => {
-    document.documentElement.setAttribute("data-theme", "light");
     Alpine.data("timetableApp", () => ({
-        theme: "light",
         selectedDay: "",
         selectedWeek: "",
         days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
         newPerson: { name: "", course: "", group: "" },
         people: [],
-        sortedClasses: null,
         uniqueIntakes: [],
         weeks: null,
         precompute: null,
@@ -164,9 +160,9 @@ document.addEventListener("alpine:init", () => {
             try {
                 const rawData = await fetchJson(API_ROUTE);
 
-                this.sortedClasses = sortTimetable(rawData);
-                this.precompute = computeClassMap(this.sortedClasses);
-                this.weeks = getMonday(this.sortedClasses);
+                const sortedClasses = sortTimetable(rawData);
+                this.precompute = computeClassMap(sortedClasses);
+                this.weeks = getMonday(sortedClasses);
 
                 if (rawData && rawData.length > 0) {
                     // 1. Map all intakes, trim whitespace (your data has a leading space!)
@@ -289,10 +285,10 @@ document.addEventListener("alpine:init", () => {
             if (!this.selectedDay || !this.selectedWeek) {
                 return null;
             }
-            d = DAY_MAP[this.selectedDay];
+            const d = DAY_MAP[this.selectedDay];
 
-            daysToAdd = d - 1;
-            selected = new Date(this.selectedWeek);
+            const daysToAdd = d - 1;
+            const selected = new Date(this.selectedWeek);
             selected.setDate(selected.getDate() + daysToAdd);
             return selected;
         },
@@ -302,7 +298,6 @@ document.addEventListener("alpine:init", () => {
 
             // 1. If the ref doesn't exist yet, return fallback
             if (!cols) {
-                console.log("No col get");
                 return 100;
             }
 
@@ -381,7 +376,6 @@ document.addEventListener("alpine:init", () => {
                 ?.get(dateStr);
 
             if (!classes) {
-                console.log("No class for this date", dateStr);
                 return false;
             }
 
@@ -406,7 +400,6 @@ document.addEventListener("alpine:init", () => {
                 ?.get(dateStr);
 
             if (!classes) {
-                console.log("No class for this date", dateStr);
                 return null;
             }
 
@@ -423,8 +416,8 @@ document.addEventListener("alpine:init", () => {
 
             const newFreeTime = [];
             this.freetime.forEach((section) => {
-                sectionStart = section[0];
-                sectionEnd = section[1];
+                const sectionStart = section[0];
+                const sectionEnd = section[1];
 
                 // Check if start time inside the section
                 if (startDecimal >= sectionStart && startDecimal < sectionEnd) {
@@ -485,7 +478,6 @@ document.addEventListener("alpine:init", () => {
             }
             const freetime = this.freetime;
             if (freetime.length === 0) {
-                console.log("No free time for this date");
                 return false;
             }
 
@@ -518,7 +510,6 @@ document.addEventListener("alpine:init", () => {
 
             const slots = this.activeSlots;
             slots.forEach((slot) => {
-                console.log("Cutting slot ", slot);
                 this.cutTime(slot.TIME_FROM, slot.TIME_TO);
             });
         },
@@ -555,10 +546,6 @@ document.addEventListener("alpine:init", () => {
                     el.style.animation = "";
                 });
             });
-        },
-
-        testing() {
-            console.log(this.people);
         },
     }));
 });

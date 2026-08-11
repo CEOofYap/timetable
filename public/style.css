@@ -13,6 +13,46 @@ body {
     min-height: 100vh;
 }
 
+select {
+    appearance: base-select;
+    cursor: pointer;
+    background-color: var(--background-200);
+    corner-shape: squircle;
+    border-radius: 20px;
+    border: 2px solid var(--text-900);
+    padding-inline: 1rem;
+    padding-block: .5rem;
+}
+
+::picker(select) {
+    appearance: base-select;
+    margin-top: 4px;
+    background-color: var(--background-200);
+    corner-shape: squircle;
+    border-radius: 20px;
+    color: var(--text-900);
+    border: 2px solid var(--text-900);
+}
+
+select::picker-icon {
+    font-size: .8rem;
+    align-content: center;
+    transition: 150ms ease;
+}
+
+select:open::picker-icon {
+    rotate: 180deg;
+}
+
+select option {
+    padding-inline: .5rem;
+    padding-block: .25rem;
+}
+
+select option:checked {
+    background-color: var(--background-300);
+}
+
 .app-container {
     display: flex;
     flex-direction: column;
@@ -44,16 +84,6 @@ body {
     justify-content: center;
     cursor: pointer;
     transition: all 0.2s;
-}
-
-.theme-toggle:hover {
-    transform: scale(1.05);
-}
-
-.theme-toggle svg {
-    width: 24px;
-    height: 24px;
-    fill: var(--text-900);
 }
 
 .main-content {
@@ -90,25 +120,9 @@ body {
     min-width: 80px;
 }
 
-.custom-select {
-    flex: 1;
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
-    border: 3px solid var(--text-900);
-    background: var(--background-200);
-    color: var(--text-900);
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23332442' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 0.75rem center;
-    padding-right: 2.5rem;
-}
-
 .retro-window {
-    border-radius: 24px;
+    corner-shape: squircle;
+    border-radius: 40px;
     border: 4px solid var(--text-900);
     background: var(--background-200);
     box-shadow: 6px 6px 0 var(--text-900);
@@ -122,8 +136,9 @@ body {
     justify-content: flex-end;
     gap: 0.5rem;
     border-bottom: 3px solid var(--text-900);
-    border-top-left-radius: 24px;
-    border-top-right-radius: 24px;
+    corner-shape: squircle;
+    border-top-left-radius: 40px;
+    border-top-right-radius: 40px;
 }
 
 .retro-btn {
@@ -131,28 +146,12 @@ body {
     height: 24px;
     border: 2px solid var(--text-900);
     background: var(--background-200);
-    border-radius: 4px;
+    corner-shape: squircle;
+    border-radius: 10px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.retro-btn.minimize {
-    font-size: 14px;
-    font-weight: 700;
-    color: var(--text-900);
-}
-
-.retro-icon {
-    width: 16px;
-    height: 16px;
-}
-
-.retro-btn.close {
-    font-size: 18px;
-    font-weight: 700;
-    color: var(--text-900);
 }
 
 .retro-window-content {
@@ -184,7 +183,8 @@ body {
 .form-input {
     flex: 1;
     padding: 0.625rem 0.75rem;
-    border-radius: 8px;
+    corner-shape: squircle;
+    border-radius: 20px;
     border: 3px solid var(--text-900);
     background: var(--background-50);
     color: var(--text-900);
@@ -203,7 +203,8 @@ body {
     margin-top: 4px;
     background: var(--background-50);
     border: 3px solid var(--text-900);
-    border-radius: 8px;
+    corner-shape: squircle;
+    border-radius: 20px;
     max-height: 150px;
     overflow-y: auto;
     z-index: 50;
@@ -264,7 +265,7 @@ body {
 
 .pill-btn {
     padding: 0.625rem 1.5rem;
-    border-radius: 9999px;
+    border-radius: 100vw;
     border: 3px solid var(--text-900);
     font-weight: 700;
     font-size: 0.875rem;
@@ -297,6 +298,7 @@ body {
 
 .timetable-container {
     flex: 1;
+    corner-shape: squircle;
     border-radius: 24px;
     border: 4px solid var(--text-900);
     background: var(--background-200);
@@ -392,6 +394,7 @@ body {
     right: 2px;
     background: var(--primary-400);
     border: 2px solid var(--text-900);
+    corner-shape: squircle;
     border-radius: 12px;
     padding: 0.5rem 0.625rem;
     overflow: hidden;
@@ -406,9 +409,11 @@ body {
     0% {
         scale: 0;
     }
+
     40% {
         scale: 1.2;
     }
+
     65% {
         scale: 0.9;
     }
@@ -428,9 +433,11 @@ body {
     0% {
         scale: 1;
     }
+
     40% {
         scale: 0.9;
     }
+
     65% {
         scale: 1.2;
     }
@@ -470,6 +477,7 @@ body {
     height: 60px;
     background: var(--background-50);
     border: 2px solid var(--text-900);
+    corner-shape: squircle;
     border-radius: 12px;
     padding: 0.5rem 0.625rem;
     z-index: 5;
@@ -508,26 +516,6 @@ body {
     text-overflow: ellipsis;
 }
 
-.current-time-line {
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: var(--accent-500);
-    z-index: 20;
-}
-
-.current-time-line::before {
-    content: "";
-    position: absolute;
-    left: -6px;
-    top: -5px;
-    width: 12px;
-    height: 12px;
-    background: var(--accent-500);
-    border-radius: 50%;
-}
-
 .people-list {
     margin-top: 1rem;
 }
@@ -550,7 +538,7 @@ body {
 
 ::-webkit-scrollbar-thumb {
     background: linear-gradient(var(--background-200), var(--background-300));
-    border-radius: 0.3rem;
+    border-radius: 100vw;
 }
 
 .people-list h3 {
@@ -568,6 +556,7 @@ body {
     align-items: center;
     padding: 0.625rem 0.75rem;
     background: var(--background-50);
+    corner-shape: squircle;
     border-radius: 12px;
     border: 2px solid var(--text-900);
     margin-bottom: 0.5rem;
@@ -575,7 +564,8 @@ body {
     margin-right: 3px;
 
     height: 3.5rem;
-    box-sizing: border-box; /* Ensures padding/borders don't add to the height */
+    box-sizing: border-box;
+    /* Ensures padding/borders don't add to the height */
 
     scroll-snap-align: start;
 
@@ -641,6 +631,7 @@ body {
 
 .person-item-remove {
     padding: 0.25rem 0.5rem;
+    corner-shape: squircle;
     border-radius: 6px;
     border: 2px solid var(--accent-500);
     background: var(--accent-300);
@@ -674,6 +665,7 @@ body {
 .free-time-card {
     background: var(--background-50);
     border: 2px solid var(--primary-500);
+    corner-shape: squircle;
     border-radius: 12px;
     padding: 0.75rem;
     box-shadow: 3px 3px 0 var(--primary-500);
@@ -695,6 +687,7 @@ body {
     background: var(--primary-400);
     color: var(--text-900);
     padding: 0.125rem 0.5rem;
+    corner-shape: squircle;
     border-radius: 4px;
     font-weight: 700;
     font-size: 0.625rem;
@@ -704,6 +697,7 @@ body {
 .free-time-btn {
     width: 100%;
     padding: 0.625rem;
+    corner-shape: squircle;
     border-radius: 12px;
     border: 3px solid var(--text-900);
     background: var(--primary-500);
@@ -766,56 +760,9 @@ body {
 
 .timetable-body::-webkit-scrollbar-thumb {
     background: var(--background-500);
-    border-radius: 4px;
+    border-radius: 100vw;
 }
 
 .timetable-body::-webkit-scrollbar-thumb:hover {
     background: var(--background-600);
-}
-
-.no-events {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: var(--text-500);
-    font-size: 0.875rem;
-    font-weight: 500;
-    text-align: center;
-}
-
-.day-selector-inline {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    margin-top: 0.5rem;
-}
-
-.day-chip {
-    padding: 0.375rem 0.75rem;
-    border-radius: 9999px;
-    border: 2px solid var(--text-900);
-    background: var(--background-50);
-    color: var(--text-700);
-    font-size: 0.75rem;
-    font-weight: 600;
-    cursor: pointer;
-    box-shadow: 2px 2px 0 var(--text-900);
-}
-
-.day-chip.active {
-    background: var(--primary-400);
-    color: var(--text-900);
-}
-
-.day-chip:active {
-    box-shadow: 0 0 0 var(--text-900);
-    transform: translate(2px, 2px);
-}
-
-.divider {
-    height: 3px;
-    background: var(--background-400);
-    border-radius: 2px;
-    margin: 0.5rem 0;
 }
