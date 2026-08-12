@@ -122,6 +122,7 @@ function loadLocal(key) {
         return [];
     } catch (e) {
         console.warn("Failed to load ", key, e);
+        return [];
     }
 }
 
@@ -135,8 +136,8 @@ document.addEventListener("alpine:init", () => {
         uniqueIntakes: [],
         weeks: null,
         precompute: null,
-        freetime: [[8, 18]],
-        showFreetime: false,
+        freetime: [[8, 21]],
+        showFreetime: true,
         showIntakeDropdown: false,
         selectedPerson: null,
 
@@ -145,11 +146,16 @@ document.addEventListener("alpine:init", () => {
             this.people = loadLocal("people");
             this.$watch("selectedDay", (value) => {
                 this.resetFreetime();
+                this.recalcFreetime();
                 this.restartAnimations();
             });
             this.$watch("selectedWeek", (value) => {
                 this.resetFreetime();
+                this.recalcFreetime();
                 this.restartAnimations();
+            });
+            this.$watch("showFreetime", (value) => {
+                this.recalcFreetime();
             });
             document.addEventListener("click", (e) => {
                 this.handleGlobalClick(e);
@@ -311,10 +317,16 @@ document.addEventListener("alpine:init", () => {
             return firstCol.getBoundingClientRect().width;
         },
 
+        // "YYYY-MM-DD" in UTC, matching the API's DATESTAMP_ISO format
+        dateKey(date) {
+            return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}-${String(date.getUTCDate()).padStart(2, "0")}`;
+        },
+
         // Helper to parse "8:30 AM" into 8.5
         parseTime(timeStr) {
             if (!timeStr) return 0;
             const match = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+            if (!match) return 0;
             let hours = parseInt(match[1]);
             const minutes = parseInt(match[2]);
             const period = match[3].toUpperCase();
@@ -325,65 +337,27 @@ document.addEventListener("alpine:init", () => {
             return hours + minutes / 60;
         },
 
-        getEventStyles(startTime, endTime) {
+        slotStyles(startDecimal, endDecimal) {
             const colWidth = this.getColumnWidth();
 
-            const startDecimal = this.parseTime(startTime);
-            const endDecimal = this.parseTime(endTime);
-
-            // Calculate how many hours past 8:00 AM the event starts
+            // How many hours past 8:00 AM the slot starts (fractional part)
             const hoursFromStart = startDecimal - Math.floor(startDecimal);
-
-            // Calculate total duration in hours
             const duration = endDecimal - startDecimal;
 
-            // Multiply hours by the exact pixel width of the column
-            const leftPixels = hoursFromStart * colWidth;
-            const widthPixels = duration * colWidth;
+            return `left: ${hoursFromStart * colWidth}px; width: ${duration * colWidth}px;`;
+        },
 
-            // Return the CSS string
-            return `left: ${leftPixels}px; width: ${widthPixels}px;`;
+        getEventStyles(startTime, endTime) {
+            return this.slotStyles(this.parseTime(startTime), this.parseTime(endTime));
         },
 
         getFreetimeStyles(startDecimal, endDecimal) {
-            const colWidth = this.getColumnWidth();
-            // Calculate how many hours past 8:00 AM the event starts
-            const hoursFromStart = startDecimal - Math.floor(startDecimal);
-
-            // Calculate total duration in hours
-            const duration = endDecimal - startDecimal;
-
-            // Multiply hours by the exact pixel width of the column
-            const leftPixels = hoursFromStart * colWidth;
-            const widthPixels = duration * colWidth;
-
-            // Return the CSS string
-            return `left: ${leftPixels}px; width: ${widthPixels}px;`;
+            return this.slotStyles(startDecimal, endDecimal);
         },
 
         // Determine whether the column got class or not
         haveClass(col, person) {
-            if (!this.selectedDate) {
-                return false;
-            }
-
-            const course = person.course;
-            const group = person.group;
-            const dateStr = this.selectedDate.toISOString().substring(0, 10);
-            const classes = this.precompute
-                ?.get(course)
-                ?.get(group)
-                ?.get(dateStr);
-
-            if (!classes) {
-                return false;
-            }
-
-            // Go through every class on that day and determine if theres any class on the specific column
-            return classes.some((slot) => {
-                const slotHour = Math.floor(this.parseTime(slot.TIME_FROM));
-                return slotHour - 6 === col;
-            });
+            return this.getClass(col, person) != null;
         },
 
         getClass(col, person) {
@@ -393,7 +367,7 @@ document.addEventListener("alpine:init", () => {
 
             const course = person.course;
             const group = person.group;
-            const dateStr = this.selectedDate.toISOString().substring(0, 10);
+            const dateStr = this.dateKey(this.selectedDate);
             const classes = this.precompute
                 ?.get(course)
                 ?.get(group)
@@ -407,7 +381,7 @@ document.addEventListener("alpine:init", () => {
             return classes.find((slot) => {
                 const slotHour = Math.floor(this.parseTime(slot.TIME_FROM));
                 return slotHour - 6 === col;
-            });
+            }) ?? null;
         },
 
         cutTime(startTime, endTime) {
@@ -452,7 +426,7 @@ document.addEventListener("alpine:init", () => {
         get activeSlots() {
             if (!this.selectedDate || !this.people.length) return [];
 
-            const dateStr = this.selectedDate.toLocaleDateString("en-CA"); // "YYYY-MM-DD"
+            const dateStr = this.dateKey(this.selectedDate);
             const allVisibleSlots = [];
 
             // Loop through every person currently in the sidebar
@@ -506,17 +480,20 @@ document.addEventListener("alpine:init", () => {
         },
 
         calcFreetime() {
-            this.showFreetime = true;
-
             const slots = this.activeSlots;
             slots.forEach((slot) => {
                 this.cutTime(slot.TIME_FROM, slot.TIME_TO);
             });
         },
 
+        recalcFreetime() {
+            if (this.showFreetime && this.selectedDate) {
+                this.calcFreetime();
+            }
+        },
+
         resetFreetime() {
-            this.freetime = [[8, 18]];
-            this.showFreetime = false;
+            this.freetime = [[8, 21]];
         },
 
         get filteredIntakes() {
