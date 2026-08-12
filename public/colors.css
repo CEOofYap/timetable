@@ -1,130 +1,136 @@
 :root {
-	--theme: light;
-	color-scheme: light;
+    --theme: light;
+    color-scheme: light;
 
-	@media (prefers-color-scheme: dark) {
-		--theme: dark;
-		color-scheme: dark;
-	}
+    @media (prefers-color-scheme: dark) {
+        --theme: dark;
+        color-scheme: dark;
+    }
 }
 
-:root:has([value="light"]:checked){
-	--theme: light;
-	color-scheme: light;
+:root:has([value="light"]:checked) {
+    --theme: light;
+    color-scheme: light;
 }
 
 body {
-	--primary-50: rgb(243, 239, 246);
-	--primary-100: rgb(231, 222, 237);
-	--primary-200: rgb(207, 189, 219);
-	--primary-300: rgb(183, 156, 201);
-	--primary-400: rgb(159, 123, 183);
-	--primary-500: rgb(135, 91, 164);
-	--primary-600: rgb(108, 72, 132);
-	--primary-700: rgb(81, 54, 99);
-	--primary-800: rgb(54, 36, 66);
-	--primary-900: rgb(27, 18, 33);
-	--primary-950: rgb(13, 9, 16);
+    --primary-50: rgb(243, 239, 246);
+    --primary-100: rgb(231, 222, 237);
+    --primary-200: rgb(207, 189, 219);
+    --primary-300: rgb(183, 156, 201);
+    --primary-400: rgb(159, 123, 183);
+    --primary-500: rgb(135, 91, 164);
+    --primary-600: rgb(108, 72, 132);
+    --primary-700: rgb(81, 54, 99);
+    --primary-800: rgb(54, 36, 66);
+    --primary-900: rgb(27, 18, 33);
+    --primary-950: rgb(13, 9, 16);
 
-	--secondary-50: rgb(246, 239, 242);
-	--secondary-100: rgb(237, 222, 228);
-	--secondary-200: rgb(219, 189, 201);
-	--secondary-300: rgb(201, 156, 174);
-	--secondary-400: rgb(183, 123, 147);
-	--secondary-500: rgb(164, 91, 120);
-	--secondary-600: rgb(132, 72, 96);
-	--secondary-700: rgb(99, 54, 72);
-	--secondary-800: rgb(66, 36, 48);
-	--secondary-900: rgb(33, 18, 24);
-	--secondary-950: rgb(16, 9, 12);
+    --secondary-50: rgb(246, 239, 242);
+    --secondary-100: rgb(237, 222, 228);
+    --secondary-200: rgb(219, 189, 201);
+    --secondary-300: rgb(201, 156, 174);
+    --secondary-400: rgb(183, 123, 147);
+    --secondary-500: rgb(164, 91, 120);
+    --secondary-600: rgb(132, 72, 96);
+    --secondary-700: rgb(99, 54, 72);
+    --secondary-800: rgb(66, 36, 48);
+    --secondary-900: rgb(33, 18, 24);
+    --secondary-950: rgb(16, 9, 12);
 
-	--accent-50: rgb(246, 239, 240);
-	--accent-100: rgb(237, 222, 225);
-	--accent-200: rgb(218, 190, 194);
-	--accent-300: rgb(200, 157, 164);
-	--accent-400: rgb(182, 124, 134);
-	--accent-500: rgb(163, 92, 104);
-	--accent-600: rgb(131, 73, 83);
-	--accent-700: rgb(98, 55, 62);
-	--accent-800: rgb(65, 37, 41);
-	--accent-900: rgb(33, 18, 21);
-	--accent-950: rgb(16, 9, 10);
+    --accent-50: rgb(246, 239, 240);
+    --accent-100: rgb(237, 222, 225);
+    --accent-200: rgb(218, 190, 194);
+    --accent-300: rgb(200, 157, 164);
+    --accent-400: rgb(182, 124, 134);
+    --accent-500: rgb(163, 92, 104);
+    --accent-600: rgb(131, 73, 83);
+    --accent-700: rgb(98, 55, 62);
+    --accent-800: rgb(65, 37, 41);
+    --accent-900: rgb(33, 18, 21);
+    --accent-950: rgb(16, 9, 10);
 
-	--c1: rgb(135, 91, 164);
-	--c2: rgb(164, 91, 120);
-	--c3: rgb(159, 123, 183);
-	--c4: rgb(183, 123, 147);
-	--c5: rgb(127, 89, 166);
-	--c6: rgb(163, 92, 104);
-	--c7: rgb(140, 91, 164);
+    --c1: rgb(135, 91, 164);
+    --c2: rgb(164, 91, 120);
+    --c3: rgb(159, 123, 183);
+    --c4: rgb(183, 123, 147);
+    --c5: rgb(127, 89, 166);
+    --c6: rgb(163, 92, 104);
+    --c7: rgb(140, 91, 164);
 
-	@container style(--theme: dark) {
-		--primary-50: rgb(13, 9, 16);
-		--primary-100: rgb(27, 18, 33);
-		--primary-200: rgb(54, 36, 66);
-		--primary-300: rgb(81, 54, 99);
-		--primary-400: rgb(108, 72, 132);
-		--primary-500: rgb(135, 91, 164);
-		--primary-600: rgb(159, 123, 183);
-		--primary-700: rgb(183, 156, 201);
-		--primary-800: rgb(207, 189, 219);
-		--primary-900: rgb(231, 222, 237);
-		--primary-950: rgb(243, 239, 246);
+    --border: rgb(27, 18, 33);
+    --special: rgb(231, 222, 237); /* for hover/selected */
 
-		--secondary-50: rgb(16, 9, 12);
-		--secondary-100: rgb(33, 18, 24);
-		--secondary-200: rgb(66, 36, 48);
-		--secondary-300: rgb(99, 54, 72);
-		--secondary-400: rgb(132, 72, 96);
-		--secondary-500: rgb(164, 91, 120);
-		--secondary-600: rgb(183, 123, 147);
-		--secondary-700: rgb(201, 156, 174);
-		--secondary-800: rgb(219, 189, 201);
-		--secondary-900: rgb(237, 222, 228);
-		--secondary-950: rgb(246, 239, 242);
+    @container style(--theme: dark) {
+        --primary-50: rgb(81, 54, 99); /* manually tweaked this for dark mode */
+        --primary-100: rgb(27, 18, 33);
+        --primary-200: rgb(54, 36, 66);
+        --primary-300: rgb(81, 54, 99);
+        --primary-400: rgb(108, 72, 132);
+        --primary-500: rgb(135, 91, 164);
+        --primary-600: rgb(159, 123, 183);
+        --primary-700: rgb(183, 156, 201);
+        --primary-800: rgb(207, 189, 219);
+        --primary-900: rgb(231, 222, 237);
+        --primary-950: rgb(243, 239, 246);
 
-		--accent-50: rgb(16, 9, 10);
-		--accent-100: rgb(33, 18, 21);
-		--accent-200: rgb(65, 37, 41);
-		--accent-300: rgb(98, 55, 62);
-		--accent-400: rgb(131, 73, 83);
-		--accent-500: rgb(163, 92, 104);
-		--accent-600: rgb(182, 124, 134);
-		--accent-700: rgb(200, 157, 164);
-		--accent-800: rgb(218, 190, 194);
-		--accent-900: rgb(237, 222, 225);
-		--accent-950: rgb(246, 239, 240);
+        --secondary-50: rgb(16, 9, 12);
+        --secondary-100: rgb(33, 18, 24);
+        --secondary-200: rgb(66, 36, 48);
+        --secondary-300: rgb(99, 54, 72);
+        --secondary-400: rgb(132, 72, 96);
+        --secondary-500: rgb(164, 91, 120);
+        --secondary-600: rgb(183, 123, 147);
+        --secondary-700: rgb(201, 156, 174);
+        --secondary-800: rgb(219, 189, 201);
+        --secondary-900: rgb(237, 222, 228);
+        --secondary-950: rgb(246, 239, 242);
 
-		--c1: rgb(135, 91, 164);
-		--c2: rgb(164, 91, 120);
-		--c3: rgb(159, 123, 183);
-		--c4: rgb(183, 123, 147);
-		--c5: rgb(163, 92, 104);
-		--c6: rgb(127, 89, 166);
-		--c7: rgb(140, 91, 164);
-	}
+        --accent-50: rgb(16, 9, 10);
+        --accent-100: rgb(33, 18, 21);
+        --accent-200: rgb(65, 37, 41);
+        --accent-300: rgb(98, 55, 62);
+        --accent-400: rgb(131, 73, 83);
+        --accent-500: rgb(163, 92, 104);
+        --accent-600: rgb(182, 124, 134);
+        --accent-700: rgb(200, 157, 164);
+        --accent-800: rgb(218, 190, 194);
+        --accent-900: rgb(237, 222, 225);
+        --accent-950: rgb(246, 239, 240);
 
-	--text-50: var(--primary-50);
-	--text-100: var(--primary-100);
-	--text-200: var(--primary-200);
-	--text-300: var(--primary-300);
-	--text-400: var(--primary-400);
-	--text-500: var(--primary-500);
-	--text-600: var(--primary-600);
-	--text-700: var(--primary-700);
-	--text-800: var(--primary-800);
-	--text-900: var(--primary-900);
-	--text-950: var(--primary-50);
+        --c1: rgb(135, 91, 164);
+        --c2: rgb(164, 91, 120);
+        --c3: rgb(159, 123, 183);
+        --c4: rgb(183, 123, 147);
+        --c5: rgb(163, 92, 104);
+        --c6: rgb(127, 89, 166);
+        --c7: rgb(140, 91, 164);
+        /* special tweak for dark mode */
+        --border: rgb(117, 47, 117);
+        --special: rgb(54, 36, 66); /* for hover/selected */
+    }
 
-	--background-50: var(--primary-50);
-	--background-100: var(--primary-100);
-	--background-200: var(--primary-200);
-	--background-300: var(--primary-300);
-	--background-400: var(--primary-400);
-	--background-500: var(--primary-500);
-	--background-600: var(--primary-600);
-	--background-700: var(--primary-700);
-	--background-800: var(--primary-800);
-	--background-900: var(--primary-900);
-	--background-950: var(--primary-50);
+    --text-50: var(--primary-50);
+    --text-100: var(--primary-100);
+    --text-200: var(--primary-200);
+    --text-300: var(--primary-300);
+    --text-400: var(--primary-400);
+    --text-500: var(--primary-500);
+    --text-600: var(--primary-600);
+    --text-700: var(--primary-700);
+    --text-800: var(--primary-800);
+    --text-900: var(--primary-900);
+    --text-950: var(--primary-50);
+
+    --background-50: var(--primary-50);
+    --background-100: var(--primary-100);
+    --background-200: var(--primary-200);
+    --background-300: var(--primary-300);
+    --background-400: var(--primary-400);
+    --background-500: var(--primary-500);
+    --background-600: var(--primary-600);
+    --background-700: var(--primary-700);
+    --background-800: var(--primary-800);
+    --background-900: var(--primary-900);
+    --background-950: var(--primary-50);
 }
