@@ -21,7 +21,7 @@ select {
     border-radius: 20px;
     border: 2px solid var(--text-900);
     padding-inline: 1rem;
-    padding-block: .5rem;
+    padding-block: 0.5rem;
 }
 
 ::picker(select) {
@@ -35,7 +35,7 @@ select {
 }
 
 select::picker-icon {
-    font-size: .8rem;
+    font-size: 0.8rem;
     align-content: center;
     transition: 150ms ease;
 }
@@ -45,8 +45,8 @@ select:open::picker-icon {
 }
 
 select option {
-    padding-inline: .5rem;
-    padding-block: .25rem;
+    padding-inline: 0.5rem;
+    padding-block: 0.25rem;
 }
 
 select option:checked {
@@ -98,7 +98,7 @@ label[for="switch"] {
     right: 0;
     bottom: 0;
     background-color: #ccc;
-    transition: .4s;
+    transition: 0.4s;
     border-radius: 100vw;
 }
 
@@ -110,15 +110,15 @@ label[for="switch"] {
     left: 4px;
     bottom: 4px;
     background-color: white;
-    transition: .4s;
+    transition: 0.4s;
     border-radius: 50%;
 }
 
-input:checked+.slider {
+input:checked + .slider {
     background-color: var(--background-500);
 }
 
-input:checked+.slider:before {
+input:checked + .slider:before {
     transform: translateX(26px);
 }
 
@@ -511,12 +511,18 @@ input:checked+.slider:before {
     font-size: 0.75rem;
     color: var(--text-900);
     line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .event-card-subtitle {
     font-size: 0.625rem;
     color: var(--text-700);
     margin-top: 2px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .event-card-time {
