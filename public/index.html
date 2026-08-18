@@ -173,12 +173,39 @@
                     </div>
                     <div class="form-row">
                         <label class="form-label">Group: </label>
-                        <input
-                            class="form-input"
-                            type="text"
-                            placeholder="e.g G1"
-                            x-model="newPerson.group"
-                        />
+                        <div class="intake-wrapper">
+                            <input
+                                class="form-input"
+                                type="text"
+                                placeholder="e.g G1"
+                                x-model="newPerson.group"
+                                autocomplete="off"
+                                @input="showGroupDropdown = true"
+                                @focus="showGroupDropdown = true"
+                                @click.outside="showGroupDropdown = false"
+                            />
+                            <ul
+                                x-show="showGroupDropdown && filteredGroups.length > 0"
+                                x-transition:enter="dropdown-enter"
+                                x-transition:enter-start="dropdown-enter-start"
+                                x-transition:enter-end="dropdown-enter-end"
+                                x-transition:leave="dropdown-leave"
+                                x-transition:leave-start="dropdown-leave-start"
+                                x-transition:leave-end="dropdown-leave-end"
+                                class="form-autocomplete"
+                            >
+                                <template
+                                    x-for="group in filteredGroups"
+                                    :key="group"
+                                >
+                                    <li
+                                        @click="selectIntake(group)"
+                                        class="form-autocomplete-item"
+                                        x-text="group"
+                                    ></li>
+                                </template>
+                            </ul>
+                        </div>
                     </div>
                     <div class="form-actions">
                         <button class="pill-btn add" @click="savePerson">

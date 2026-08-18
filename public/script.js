@@ -133,12 +133,13 @@ document.addEventListener("alpine:init", () => {
         days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
         newPerson: { name: "", course: "", group: "" },
         people: [],
-        uniqueIntakes: [],
+        allIntakes: {},
         weeks: null,
         precompute: null,
         freetime: [[8, 21]],
         showFreetime: true,
         showIntakeDropdown: false,
+        showGroupDropdown: false,
         selectedPerson: null,
 
         init() {
@@ -171,13 +172,20 @@ document.addEventListener("alpine:init", () => {
                 this.weeks = getMonday(sortedClasses);
 
                 if (rawData && rawData.length > 0) {
-                    // 1. Map all intakes, trim whitespace (your data has a leading space!)
-                    const allIntakes = rawData.map((slot) =>
-                        slot.INTAKE.trim(),
-                    );
+                    this.allIntakes = rawData.reduce(
+                        (accumulator, currentItem) => {
+                            const intakeCode = currentItem["INTAKE"];
+                            const group = currentItem["GROUPING"];
 
-                    // 2. Use a Set to remove duplicates, then convert back to array and sort
-                    this.uniqueIntakes = [...new Set(allIntakes)].sort();
+                            if (!accumulator[intakeCode]) {
+                                accumulator[intakeCode] = new Set();
+                            }
+
+                            accumulator[intakeCode].add(group);
+                            return accumulator;
+                        },
+                        {},
+                    );
                 }
             } catch (e) {
                 console.log("Failed to get timetable from APU", e);
@@ -348,7 +356,10 @@ document.addEventListener("alpine:init", () => {
         },
 
         getEventStyles(startTime, endTime) {
-            return this.slotStyles(this.parseTime(startTime), this.parseTime(endTime));
+            return this.slotStyles(
+                this.parseTime(startTime),
+                this.parseTime(endTime),
+            );
         },
 
         getFreetimeStyles(startDecimal, endDecimal) {
@@ -378,10 +389,12 @@ document.addEventListener("alpine:init", () => {
             }
 
             // Go through every class on that day and determine if theres any class on the specific column
-            return classes.find((slot) => {
-                const slotHour = Math.floor(this.parseTime(slot.TIME_FROM));
-                return slotHour - 6 === col;
-            }) ?? null;
+            return (
+                classes.find((slot) => {
+                    const slotHour = Math.floor(this.parseTime(slot.TIME_FROM));
+                    return slotHour - 6 === col;
+                }) ?? null
+            );
         },
 
         cutTime(startTime, endTime) {
@@ -497,18 +510,38 @@ document.addEventListener("alpine:init", () => {
         },
 
         get filteredIntakes() {
-            if (!this.newPerson.course) return this.uniqueIntakes;
+            const unique = Object.keys(this.allIntakes);
+            if (!this.newPerson.course) return unique;
 
-            return this.uniqueIntakes.filter((intake) =>
+            return unique.filter((intake) =>
                 intake
                     .toLowerCase()
                     .includes(this.newPerson.course.toLowerCase()),
             );
         },
 
+        get filteredGroups() {
+            const groups = [...(this.allIntakes[this.newPerson.course] || [])];
+
+            if (!this.newPerson.group) return groups.sort();
+
+            return groups
+                .filter((group) =>
+                    group
+                        .toLowerCase()
+                        .includes(this.newPerson.group.toLowerCase()),
+                )
+                .sort();
+        },
+
         selectIntake(code) {
             this.newPerson.course = code;
             this.showIntakeDropdown = false;
+        },
+
+        selectGroup(code) {
+            this.newPerson.group = code;
+            this.showGroupDropdown = false;
         },
 
         restartAnimations() {
